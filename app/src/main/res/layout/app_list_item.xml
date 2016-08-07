@@ -7,8 +7,7 @@
     android:layout_height="wrap_content"
     android:padding="8dp"
     android:gravity="center_horizontal"
-    android:clickable="true"
-    android:background="?attr/selectableItemBackground">
+    android:clickable="true">
     
     <ImageView
         android:scaleType="centerCrop"

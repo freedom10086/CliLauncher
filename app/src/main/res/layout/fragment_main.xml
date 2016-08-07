@@ -1,12 +1,74 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.yang.mylauncher.MainFragment">
 
-    <Button
-        android:id="@+id/show_apps"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
-</FrameLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fadeScrollbars="true"
+        android:layout_above="@+id/input_view"
+        android:scrollbars="vertical"
+        android:scrollbarThumbVertical="@drawable/scrollbar_thumb">
+
+        <com.yang.mylauncher.ConsoletextView
+            android:id="@+id/console_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+    </ScrollView>
+
+    <RelativeLayout
+        android:background="@color/colorBlack"
+        android:id="@+id/input_view"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true">
+
+
+        <HorizontalScrollView
+            android:id="@+id/suggest_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <LinearLayout
+                android:id="@+id/suggestions_group"
+                android:layout_width="wrap_content"
+                android:layout_height="32dp"
+                android:gravity="start|center_vertical"
+                android:orientation="horizontal">
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <TextView
+            android:gravity="bottom"
+            android:height="24dp"
+            android:textSize="14sp"
+            android:textColor="@color/colorInput"
+            android:text="[root@~] # "
+            android:layout_below="@+id/suggest_view"
+            android:id="@+id/user_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/ed_input"
+            android:gravity="bottom"
+            android:height="24dp"
+            android:hint="@string/app_name"
+            android:textSize="14sp"
+            android:background="@null"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:maxLines="1"
+            android:inputType="text"
+            android:selectAllOnFocus="false"
+            android:typeface="monospace"
+            android:imeOptions="actionSend"
+            android:layout_toEndOf="@+id/user_name"
+            android:textCursorDrawable="@drawable/edittext_cursor"
+            android:layout_alignBottom="@+id/user_name"/>
+    </RelativeLayout>
+
+</RelativeLayout>

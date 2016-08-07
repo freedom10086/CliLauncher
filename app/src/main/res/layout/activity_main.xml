@@ -5,27 +5,40 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.yang.mylauncher.MainActivity"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/colorBlack">
 
-    <LinearLayout
-        android:id="@+id/myToolBar"
+    <RelativeLayout
+        android:id="@+id/info_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <TextView
-            android:maxLines="1"
-            android:id="@+id/info_text"
-            android:text="ram 999Mb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:id="@+id/info_1"
+            android:text="m1 note"
+            android:textSize="12sp"
+            android:textColor="@color/colorInfo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/btn_show_apps" />
+
+        <TextView
+            android:layout_below="@+id/info_1"
+            android:id="@+id/info_2"
+            android:textColor="@color/colorWarning"
+            android:text="RAM:498MB ROM 1436MB"
+            android:textSize="12sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toStartOf="@+id/btn_show_apps" />
         <Button
             android:id="@+id/btn_show_apps"
-            android:text="show apps"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_width="40dp"
+            android:layout_height="32dp"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true" />
+    </RelativeLayout>
 
-    </LinearLayout>
 
     <FrameLayout
         android:id="@+id/main_frame"

@@ -1,5 +1,6 @@
 package com.yang.mylauncher;
 
+import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
@@ -7,21 +8,21 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends Activity implements View.OnClickListener{
 
     private FragmentManager manager;
-    private Fragment f1,f2,current;
-    private TextView info_text;
+    private Fragment current;
+    private TextView info_text1,info_text2;
     private List<AppData> apps;
 
 
@@ -29,36 +30,28 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        setTransparentStatusBar();
         manager = getFragmentManager();
-        info_text = (TextView) findViewById(R.id.info_text);
-        f1 = new MainFragment();
-        FragmentTransaction transaction = manager.beginTransaction();
-        transaction.add(f1,MainFragment.TAG).commit();
-        current = f1;
+        info_text1 = (TextView) findViewById(R.id.info_1);
+        info_text2 = (TextView) findViewById(R.id.info_2);
 
         findViewById(R.id.btn_show_apps).setVisibility(View.GONE);
 
         String model = DeviceUtils.getModel();
+        String menufacture = DeviceUtils.getManufacturer();
         String netWork = NetworkUtils.getCurNetworkType(this);
         int memAva = DeviceUtils.getAvailMemory(this);
         int menTotal = DeviceUtils.getTotalMemory(this);
-
-        String cpuinfo = "\ncpu info :"+DeviceUtils.getCpuInfo();
-        int cpucount = DeviceUtils.getNumCores2();
-        String meminfo = DeviceUtils.getMenInfo();
-
-        String[] s =  DeviceUtils.getCpuFreq(0);
-        Log.e("cpu", TextUtils.join("\n",s));
-
         long[] rom = DeviceUtils.getRomSize();
-        Log.e("rom", rom[0]+"/"+rom[1]);
-
-        Log.e("version",DeviceUtils.getSysInfo());
-
         DeviceUtils.getBootTime();
-        info_text.setText(model+netWork+memAva+"/"+menTotal+meminfo);
-
+        info_text1.setText(menufacture+" "+model+" "+netWork);
+        info_text2.setText("RAM:"+memAva+"/"+menTotal+"MB  ROM:"+rom[0]+"/"+rom[1]+"MB");
         getApps();
+
+        current = new MainFragment();
+        manager.beginTransaction()
+                .replace(R.id.main_frame,current,MainFragment.TAG)
+                .commit();
 
     }
 
@@ -67,9 +60,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     public void onBackPressed() {
         if(current instanceof AppListFragment){
-            FragmentTransaction transaction = manager.beginTransaction();
-            transaction.hide(f2).show(f1).commit();
-            current = f1;
+            Fragment f = manager.findFragmentByTag(MainFragment.TAG);
+            switchContent(f,MainFragment.TAG);
         }
     }
 
@@ -120,16 +112,43 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.btn_show_apps:
-                if(f2==null){
-                    f2  = new AppListFragment();
+                FragmentManager fm = getFragmentManager();
+                Fragment f =  fm.findFragmentByTag(AppListFragment.TAG);
+                if(f==null){
+                    f  = new AppListFragment();
                 }
-                FragmentTransaction transaction = manager.beginTransaction();
-                if(!f2.isAdded()){
-                    transaction.hide(f1).add(R.id.main_frame, f2,AppListFragment.TAG).commit();
-                }else{
-                    transaction.hide(f1).show(f2).commit();
-                }
-                current = f2;
+                switchContent(f,AppListFragment.TAG);
         }
     }
+
+
+    private void switchContent(Fragment to, String Tag) {
+        if (current != to) {
+            FragmentTransaction transaction = manager.beginTransaction();
+            //.setCustomAnimations(android.R.anim.fade_in, R.anim.slide_out);
+            if (!to.isAdded()) {    // 先判断是否被add过
+                transaction.hide(current).add(R.id.main_frame, to,Tag).commit();
+                // 隐藏当前的fragment，add下一个到Activity中
+            } else {
+                transaction.hide(current).show(to).commit(); // 隐藏当前的fragment，显示下一个
+            }
+            current = to;
+        }
+    }
+
+
+    /**
+     * 设置透明状态栏(api >= 19方可使用)
+     * <p>android:clipToPadding="true"
+     * <p>android:fitsSystemWindows="true"
+     */
+    private   void setTransparentStatusBar() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            //透明状态栏
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+            //透明导航栏
+            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+    }
+
 }
