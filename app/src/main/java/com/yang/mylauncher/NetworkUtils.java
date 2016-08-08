@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 
@@ -113,5 +114,17 @@ public class NetworkUtils {
             }
         }
         return "NOTCONNECTED";
+    }
+
+
+    public static boolean changeWifiState(Context context,boolean b){
+        WifiManager wifiManager = (WifiManager) context.getSystemService(Context.WIFI_SERVICE);
+        if (wifiManager.isWifiEnabled()&&!b) {
+            wifiManager.setWifiEnabled(false);
+        } else if(!wifiManager.isWifiEnabled()){
+            wifiManager.setWifiEnabled(true);
+        }
+
+        return wifiManager.isWifiEnabled();
     }
 }

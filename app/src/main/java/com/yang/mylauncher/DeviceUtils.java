@@ -2,6 +2,7 @@ package com.yang.mylauncher;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -303,5 +304,12 @@ public class DeviceUtils {
 
         return ut/1000.0f;
     }
+
+
+    //判断是否存在flashlight
+    public static boolean isHaveFlashLight(Context context){
+        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
+    }
+
 }
 

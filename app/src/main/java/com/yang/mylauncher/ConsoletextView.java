@@ -33,7 +33,8 @@ public class ConsoletextView extends TextView{
     }
 
 
-    public void append(String str,int colorId){
+    public void append(String input,int colorId){
+        String str = "\n"+input;
         int start = strBuilder.length();
         strBuilder.append(str);
         int end = start+str.length();
