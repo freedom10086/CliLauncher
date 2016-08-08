@@ -23,12 +23,13 @@ public class AsyncCmdClient extends SyncCmdClient{
     }
 
 
-    public String asyncExec(final BaseCommand command, final ResponseHandler handler) {
-        if(!super.checkArgs(command)){
-            handler.sendMessage(ResponseHandler.MSG_FAILURE,"error");
+    public String asyncExec(final BaseCommand command, final ExecHandler handler) {
+        if(command==null||!super.checkArgs(command)){
+            handler.sendMessage(ExecHandler.MSG_FAILURE,"error",OutPutType.ERROR);
+            return "error";
         }
 
-        handler.sendMessage(ResponseHandler.MSG_START,"Start");
+        handler.sendMessage(ExecHandler.MSG_START,"Start",OutPutType.INFO);
         Runnable runnable = new Runnable() {
             @Override
             public void run() {
@@ -37,11 +38,13 @@ public class AsyncCmdClient extends SyncCmdClient{
                         Log.e("thread","runing....."+i);
                         Thread.sleep(1000);
                     }
-                    String res = command.exex();
-                    handler.sendMessage(ResponseHandler.MSG_SUCCESS,res);
+                    String res = command.exec("");
+                    handler.sendMessage(ExecHandler.MSG_SUCCESS,res,OutPutType.NORMAL);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                    handler.sendMessage(ResponseHandler.MSG_FAILURE,"canceled...");
+                    handler.sendMessage(ExecHandler.MSG_FAILURE,"canceled...",OutPutType.ERROR);
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
             }

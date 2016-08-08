@@ -11,6 +11,8 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
+import com.yang.mylauncher.command.OutPutType;
+
 public class ConsoletextView extends TextView{
 
     private Context context;
@@ -33,13 +35,31 @@ public class ConsoletextView extends TextView{
     }
 
 
-    public void append(String input,int colorId){
+    public void append(String input, OutPutType type){
         String str = "\n"+input;
         int start = strBuilder.length();
         strBuilder.append(str);
         int end = start+str.length();
         //设置字体前景色
-        int color = getColorWrapper(context,colorId);
+        int resid = R.color.colorWhite;
+        switch (type){
+            case NORMAL:
+                resid = R.color.colorWhite;
+                break;
+            case INFO:
+                resid = R.color.colorInfo;
+                break;
+            case INPUT:
+                resid = R.color.colorInput;
+                break;
+            case WORNING:
+                resid = R.color.colorWarning;
+                break;
+            case ERROR:
+                resid = R.color.colorError;
+                break;
+        }
+        int color = getColorWrapper(context,resid);
         strBuilder.setSpan(new ForegroundColorSpan(color), start, end,
                 Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         strBuilder.setSpan(new TypefaceSpan("monospace"), start, end,

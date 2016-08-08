@@ -1,4 +1,4 @@
-package com.yang.mylauncher;
+package com.yang.mylauncher.utils;
 
 import android.app.Activity;
 import android.content.Context;

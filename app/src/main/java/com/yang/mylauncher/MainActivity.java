@@ -15,8 +15,15 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
+import com.yang.mylauncher.command.ContactManerger;
+import com.yang.mylauncher.utils.DeviceUtils;
+import com.yang.mylauncher.utils.NetworkUtils;
+import com.yang.mylauncher.utils.ShellUtils;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
@@ -52,6 +59,24 @@ public class MainActivity extends Activity implements View.OnClickListener{
         manager.beginTransaction()
                 .replace(R.id.main_frame,current,MainFragment.TAG)
                 .commit();
+
+        new Thread(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        String[] command = new String[]{"/system/bin/ls", "-l", "./" };
+                        String res =  ShellUtils.execShell("ls -al storage");
+                        Log.e("cmd1","cmd1"+res);
+                    }
+                }
+        ).start();
+
+        ContactManerger manerger =new ContactManerger();
+        Map<String,ContactManerger.Contact> peoples =  manerger.getContacts(this);
+        Set<String> names =  peoples.keySet();
+        for(String name:names){
+            Log.e("name","name"+name+"  "+peoples.get(name).toString());
+        }
 
     }
 

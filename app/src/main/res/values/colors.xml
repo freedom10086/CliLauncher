@@ -2,9 +2,11 @@
 <resources>
     <color name="colorBlack">#000000</color>
     <color name="colorWhite">#FFFFFF</color>
-    <color name="colorInfo">#ffff9800</color>
+    <color name="colorInfo">#ffff6800</color>
     <color name="colorInput">#ff00ff00</color>
-    <color name="colorWarning">#fff44336</color>
+    <color name="colorWarning">#ffff7336</color>
+    <color name="colorError">#ffff3333</color>
+
     <color name="colorSuggestBg">#ff00897B</color>
     <color name="colorSuggestBgC">#ff76FF03</color>
     <color name="colorSuggestBgM">#ffEEFF41</color>

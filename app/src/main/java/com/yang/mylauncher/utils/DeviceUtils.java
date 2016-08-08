@@ -1,4 +1,4 @@
-package com.yang.mylauncher;
+package com.yang.mylauncher.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
@@ -199,6 +199,8 @@ public class DeviceUtils {
             if(line.length()>3){
                 maxFreq = line.substring(0,line.length()-3)+"MHZ";
             }
+
+            reader.close();
         } catch (IOException ex) {
             ex.printStackTrace();
         }

@@ -1,19 +1,23 @@
 package com.yang.mylauncher.command;
 
-/**
- * Created by yang on 16-8-8.
- */
+
 
 public  class SyncCmdClient {
 
-    public void execCommand(BaseCommand command,ResponseHandler handler){
+    public void execCommand(BaseCommand command,ExecHandler handler){
         if(!checkArgs(command)){
-            handler.sendMessage(ResponseHandler.MSG_FAILURE,"error");
+            handler.sendMessage(ExecHandler.MSG_FAILURE,"error",OutPutType.ERROR);
         }
 
-        handler.sendMessage(ResponseHandler.MSG_START,"Start");
-        String s =  command.exex();
-        handler.sendMessage(ResponseHandler.MSG_SUCCESS,s);
+        handler.sendMessage(ExecHandler.MSG_START,"Start",OutPutType.INFO);
+        String s = null;
+        try {
+            s = command.exec("hello");
+        } catch (Exception e) {
+            e.printStackTrace();
+            handler.sendMessage(ExecHandler.MSG_FAILURE,e.getMessage(),OutPutType.ERROR);
+        }
+        handler.sendMessage(ExecHandler.MSG_SUCCESS,s,OutPutType.NORMAL);
     }
 
 

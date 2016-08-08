@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 
-public abstract class ResponseHandler {
+public abstract class ExecHandler {
 
     protected static final int MSG_SUCCESS = 0;
     protected static final int MSG_FAILURE = 1;
@@ -14,8 +14,9 @@ public abstract class ResponseHandler {
 
     private Handler handler;
     private Looper looper = null;
+    private OutPutType type = OutPutType.NORMAL;
 
-    public ResponseHandler(){
+    public ExecHandler(){
         this.looper = (looper == null ? Looper.getMainLooper() : looper);
         handler = new MyHandler(this, this.looper);
     }
@@ -24,30 +25,31 @@ public abstract class ResponseHandler {
         String res = (String) message.obj;
         switch (message.what){
             case MSG_SUCCESS:
-                onSuccess(res);
+                onSuccess(type,res);
                 break;
             case MSG_FAILURE:
-                onFailure(res);
+                onFailure(type,res);
                 break;
             case MSG_PROGRESS:
-                onProgress(res);
+                onProgress(type,res);
                 break;
             case MSG_START:
-                onStart(res);
+                onStart(type,res);
                 break;
         }
     }
 
 
-    public abstract void onSuccess(String res);
-    public abstract void onFailure(String res);
-    public void onStart(String info){}
-    public void onProgress(String info){}
+    public abstract void onSuccess(OutPutType type,String res);
+    public abstract void onFailure(OutPutType type,String res);
+    public void onStart(OutPutType type,String info){}
+    public void onProgress(OutPutType type,String info){}
 
 
-    final protected void sendMessage(int messageWhat,String res){
+    final protected void sendMessage(int messageWhat,String res,OutPutType type){
         Message m =  Message.obtain(handler, messageWhat,res);
         handler.sendMessage(m);
+        this.type = type;
     }
 
 
@@ -55,9 +57,9 @@ public abstract class ResponseHandler {
      * Avoid leaks by using a non-anonymous handler class.
      */
     final private static class MyHandler extends Handler {
-        private final ResponseHandler mResponder;
+        private final ExecHandler mResponder;
 
-        MyHandler(ResponseHandler mResponder, Looper looper) {
+        MyHandler(ExecHandler mResponder, Looper looper) {
             super(looper);
             this.mResponder = mResponder;
         }

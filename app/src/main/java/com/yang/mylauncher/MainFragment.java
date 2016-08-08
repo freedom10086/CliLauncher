@@ -11,105 +11,94 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 
 import com.yang.mylauncher.command.AsyncCmdClient;
 import com.yang.mylauncher.command.BaseCommand;
-import com.yang.mylauncher.command.ResponseHandler;
+import com.yang.mylauncher.command.CommandFactory;
+import com.yang.mylauncher.command.ExecHandler;
+import com.yang.mylauncher.command.OutPutType;
+import com.yang.mylauncher.command.SuggestHandler;
+import com.yang.mylauncher.command.SuggestItem;
 
 
-public class MainFragment extends Fragment {
+public class MainFragment extends Fragment implements EditText.OnEditorActionListener{
 
     public static final String TAG = "MainFragment";
     private ConsoletextView consoletextView;
     private EditText editText;
-
-    public MainFragment() {
-        // Required empty public constructor
-    }
-
+    private ScrollView scrollView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        Log.e("MainFragment", "oncreateView");
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_main, container, false);
         consoletextView = (ConsoletextView) v.findViewById(R.id.console_text);
         editText = (EditText) v.findViewById(R.id.ed_input);
-        String meminfo = DeviceUtils.getMenInfo();
-        consoletextView.append(meminfo, R.color.colorWhite);
-        editText.setOnEditorActionListener(new EditText.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
-                boolean handled = false;
-                if (i == EditorInfo.IME_ACTION_SEND) {
-                    handle_input();
-                    handled = true;
-                }
-                return handled;
-            }
-        });
+        scrollView = (ScrollView) v.findViewById(R.id.scroll_view);
+        editText.setOnEditorActionListener(this);
+        suggestHandler.setEditText(editText);
         return v;
     }
 
 
-    String key = "";
-    AsyncCmdClient cmdClient = new AsyncCmdClient();
+    @Override
+    public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
+        boolean handled = false;
+        if (i == EditorInfo.IME_ACTION_SEND) {
+            handle_input();
+            handled = true;
+        }
+        return handled;
+    }
+
     private void handle_input() {
         String e = editText.getText().toString().trim();
         if (!TextUtils.isEmpty(e)) {
-            consoletextView.append(">>" + e, R.color.colorInput);
+            appendText(e,OutPutType.INPUT);
+            BaseCommand command = CommandFactory.getCommand(e);
+            client.asyncExec(command,exeHandler);
             editText.setText("");
-
-
-
-            if (e.equals("flash")) {
-            }else if(e.equals("wifi")){
-                consoletextView.append("wifi state:" +NetworkUtils.changeWifiState(getActivity(),true),R.color.colorWhite);
-            }else if(e.equals("test")){
-
-                key = cmdClient.asyncExec(new BaseCommand() {
-                    @Override
-                    public String exex() {
-                        return "exe compete";
-                    }
-
-                    @Override
-                    public String[] getArgs() {
-                        return new String[0];
-                    }
-
-                    @Override
-                    public int[] getArgsCount() {
-                        return new int[0];
-                    }
-
-                    @Override
-                    public String getHelpText() {
-                        return null;
-                    }
-
-                    @Override
-                    public int getArgsType() {
-                        return 0;
-                    }
-                }, new ResponseHandler() {
-                    @Override
-                    public void onSuccess(String res) {
-                        Log.e("onSuccess",res);
-                    }
-
-                    @Override
-                    public void onFailure(String res) {
-
-                    }
-                });
-            }else if(e.equals("cancel")){
-                boolean b =  cmdClient.cancel(key);
-                Log.e("cancel",b+"");
-            }
-
         }
     }
+
+
+    private SuggestHandler suggestHandler = new SuggestHandler() {
+        @Override
+        public void OnGetSuggests(SuggestItem[] items) {
+            Log.e("onget suggest","len is"+items.length);
+        }
+    };
+
+
+    private AsyncCmdClient client =new AsyncCmdClient();
+    private ExecHandler exeHandler = new ExecHandler() {
+        @Override
+        public void onSuccess(OutPutType type, String res) {
+            appendText(res,type);
+        }
+
+        @Override
+        public void onFailure(OutPutType type, String res) {
+            appendText(res,type);
+        }
+    };
+
+
+    private void appendText(String s, OutPutType type){
+        consoletextView.append(s,type);
+        scrollView.postDelayed(mScrollRunnable,100);
+    }
+
+    private Runnable mScrollRunnable = new Runnable() {
+        @Override
+        public void run() {
+            boolean inputHadFocus = editText.hasFocus();
+            scrollView.fullScroll(ScrollView.FOCUS_DOWN);
+            if (inputHadFocus)
+                editText.requestFocus();
+        }
+    };
+
 
 }
