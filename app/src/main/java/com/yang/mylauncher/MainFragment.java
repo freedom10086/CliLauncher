@@ -2,15 +2,19 @@ package com.yang.mylauncher;
 
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
+import android.widget.BaseAdapter;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -29,6 +33,7 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
     private ConsoletextView consoletextView;
     private EditText editText;
     private ScrollView scrollView;
+    private LinearLayout sgContainer;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -36,8 +41,9 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
         consoletextView = (ConsoletextView) v.findViewById(R.id.console_text);
         editText = (EditText) v.findViewById(R.id.ed_input);
         scrollView = (ScrollView) v.findViewById(R.id.scroll_view);
+        sgContainer = (LinearLayout) v.findViewById(R.id.suggestions_container);
         editText.setOnEditorActionListener(this);
-        suggestHandler.setEditText(editText);
+        new SuggestHandler(getActivity(), editText, sgContainer);
         return v;
     }
 
@@ -61,14 +67,6 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
             editText.setText("");
         }
     }
-
-
-    private SuggestHandler suggestHandler = new SuggestHandler() {
-        @Override
-        public void OnGetSuggests(SuggestItem[] items) {
-            Log.e("onget suggest","len is"+items.length);
-        }
-    };
 
 
     private AsyncCmdClient client =new AsyncCmdClient();
@@ -99,6 +97,8 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
                 editText.requestFocus();
         }
     };
+
+
 
 
 }

@@ -70,6 +70,7 @@ public class ConsoletextView extends TextView{
 
 
     private int getColorWrapper(Context context, int id) {
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.getColor(id);
         } else {
@@ -77,8 +78,5 @@ public class ConsoletextView extends TextView{
             return context.getResources().getColor(id);
         }
     }
-
-
-
 
 }

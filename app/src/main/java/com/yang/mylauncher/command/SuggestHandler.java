@@ -1,31 +1,40 @@
 package com.yang.mylauncher.command;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.text.Editable;
+import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.util.TypedValue;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TextView;
+
+import com.yang.mylauncher.Config;
 
 
-public abstract class SuggestHandler implements TextWatcher{
+public class SuggestHandler implements TextWatcher{
 
     private EditText editText;
+    private LinearLayout suggestContainer;
     private GetSuggestTask task;
+    private Context context;
 
-    public void setEditText(EditText editText) {
+    public SuggestHandler(Context context,EditText editText, LinearLayout suggestContainer) {
         this.editText = editText;
+        this.suggestContainer = suggestContainer;
         this.editText.addTextChangedListener(this);
+        this.context = context;
     }
 
     @Override
     public void beforeTextChanged(CharSequence charSequence, int start, int count, int after) {
-        Log.e("suggest before",charSequence.toString());
     }
 
     @Override
     public void onTextChanged(CharSequence charSequence, int start, int before, int connt) {
-        Log.e("suggest on",charSequence.toString());
-
         if(task!=null&&task.getStatus()!= AsyncTask.Status.FINISHED){
             task.cancel(true);
         }
@@ -36,11 +45,8 @@ public abstract class SuggestHandler implements TextWatcher{
 
     @Override
     public void afterTextChanged(Editable editable) {
-        Log.e("suggest after",editable.toString());
     }
 
-
-    public abstract void  OnGetSuggests(SuggestItem[] items);
 
     private class GetSuggestTask extends AsyncTask<String,Void,SuggestItem[]>{
 
@@ -72,10 +78,10 @@ public abstract class SuggestHandler implements TextWatcher{
         @Override
         protected void onPostExecute(SuggestItem[] items) {
             super.onPostExecute(items);
-            OnGetSuggests(items);
+            notifyDataChange(items);
             if(items!=null){
-                for (int i=0;i<items.length;i++){
-                    Log.e("finish suggest is",items[i].name);
+                for (SuggestItem item : items) {
+                    Log.e("finish suggest is", item.name);
                 }
             }
 
@@ -85,6 +91,46 @@ public abstract class SuggestHandler implements TextWatcher{
         protected void onCancelled() {
             super.onCancelled();
             Log.e("cancel","======");
+        }
+    }
+
+
+    private TextView getSingleView(View v, SuggestItem item) {
+        TextView textView = (TextView) v;
+        if(textView==null){
+            textView = new TextView(context);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            params.setMargins(10,5,10,5);
+            textView.setPadding(10,5,10,5);
+            textView.setMaxEms(8);
+            textView.setEllipsize(TextUtils.TruncateAt.END);
+            textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
+            textView.setTextColor(Config.colorWhite);
+            textView.setLayoutParams(params);
+            textView.setMaxLines(1);
+        }
+        textView.setBackgroundColor(item.color);
+        textView.setText(item.name);
+        return textView;
+    }
+
+    private void notifyDataChange(SuggestItem[] items){
+        if(suggestContainer==null)
+            return;
+        int count = (items==null?0:items.length);
+        int preCount = suggestContainer.getChildCount();
+        //合理的复用之前的textview
+        if(preCount>count){
+            suggestContainer.removeViews(count,preCount-count);
+        }
+        for(int i = 0;i<count;i++){
+            View  view = suggestContainer.getChildAt(i);
+            if(view==null){
+                suggestContainer.addView(getSingleView(null,items[i]));
+            }else{
+                getSingleView(view,items[i]);
+            }
         }
     }
 }
