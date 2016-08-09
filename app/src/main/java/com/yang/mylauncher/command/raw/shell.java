@@ -24,11 +24,6 @@ public class shell extends base{
     }
 
     @Override
-    protected String checkArgsType(String[] args) {
-        return null;
-    }
-
-    @Override
     public ArgType argType(int i) {
         return ArgType.UNDEFINIED;
     }

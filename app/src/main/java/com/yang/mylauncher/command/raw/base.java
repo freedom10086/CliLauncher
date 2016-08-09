@@ -16,19 +16,13 @@ public abstract class base {
         }else if(arglen<getArgsNum()[0]){
             return "Args number error !!! \ncommand \""+execContext.command+"\" at least need "+getArgsNum()[0]+" args!!!";
         }
-        String s = checkArgsType(execContext.args);
-        if(s!=null){
-            return s;
-        }
+
 
         return execCommand();
     }
 
 
-    protected abstract String execCommand();
-
-    //if ok return null
-    protected abstract String checkArgsType(String[] args);
+    protected abstract String execCommand() throws Exception;
 
     public abstract ArgType argType(int i);
 

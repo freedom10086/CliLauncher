@@ -12,4 +12,9 @@ public class ExecContext {
     public String currentDir;
     public String[] args;
     public String command;
+
+
+    public int getArgsNum(){
+        return (args==null)?0:args.length;
+    }
 }

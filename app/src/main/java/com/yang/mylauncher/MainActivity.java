@@ -21,6 +21,7 @@ import com.yang.mylauncher.command.raw.base;
 import com.yang.mylauncher.suggest.ContactManerger;
 import com.yang.mylauncher.suggest.SuggestProvider;
 import com.yang.mylauncher.utils.DeviceUtils;
+import com.yang.mylauncher.utils.HttpUtils;
 import com.yang.mylauncher.utils.NetworkUtils;
 import com.yang.mylauncher.utils.ShellUtils;
 import com.yang.mylauncher.utils.Utils;
@@ -94,19 +95,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
 
         getContentResolver().update(SuggestProvider.CONTENT_URI,null,null,new String[]{"name5"});
-
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    String s = ShellUtils.execShell("ping -c 3 -w 100 www.baidu.com");
-                    Log.e("shell","Result "+s);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-
     }
 
 

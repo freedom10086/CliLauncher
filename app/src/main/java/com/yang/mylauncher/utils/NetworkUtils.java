@@ -9,9 +9,6 @@ import android.net.wifi.WifiManager;
 import android.provider.Settings;
 import android.telephony.TelephonyManager;
 
-/**
- * Created by yang on 16-8-7.
- */
 
 public class NetworkUtils {
     private NetworkUtils() {
@@ -44,7 +41,11 @@ public class NetworkUtils {
     public static boolean isWifiConnected(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context
                 .getSystemService(Context.CONNECTIVITY_SERVICE);
-        return cm != null && cm.getActiveNetworkInfo().getType() == ConnectivityManager.TYPE_WIFI;
+        NetworkInfo info = cm.getActiveNetworkInfo();
+        if(info!=null&&info.isConnected()){
+            return info.getType()==ConnectivityManager.TYPE_WIFI;
+        }
+        return false;
     }
 
     /**

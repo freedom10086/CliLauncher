@@ -13,8 +13,8 @@ public class AppData {
         this.icon = icon;
     }
 
-    CharSequence name;
-    String pkg;
-    Intent intent;
-    Drawable icon;
+    public CharSequence name;
+    public String pkg;
+    public Intent intent;
+    public Drawable icon;
 }

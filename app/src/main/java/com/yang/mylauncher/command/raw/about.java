@@ -1,6 +1,6 @@
 package com.yang.mylauncher.command.raw;
+
 import com.yang.mylauncher.command.ArgType;
-import com.yang.mylauncher.command.ExecContext;
 
 
 public class about extends base {
@@ -9,11 +9,6 @@ public class about extends base {
     @Override
     protected String execCommand() {
         return "yluo launcher version 1.0\nthis is a linux shell like launcher!";
-    }
-
-    @Override
-    protected String checkArgsType(String[] args) {
-        return null;
     }
 
 
