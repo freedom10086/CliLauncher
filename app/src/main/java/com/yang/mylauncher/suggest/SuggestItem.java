@@ -1,9 +1,10 @@
-package com.yang.mylauncher.command;
+package com.yang.mylauncher.suggest;
 
 
 import android.graphics.Color;
 
 import com.yang.mylauncher.Config;
+import com.yang.mylauncher.command.ArgType;
 
 public class SuggestItem {
     public String name;

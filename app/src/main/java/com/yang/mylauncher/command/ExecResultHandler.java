@@ -5,7 +5,7 @@ import android.os.Looper;
 import android.os.Message;
 
 
-public abstract class ExecHandler {
+public abstract class ExecResultHandler {
 
     protected static final int MSG_SUCCESS = 0;
     protected static final int MSG_FAILURE = 1;
@@ -16,7 +16,7 @@ public abstract class ExecHandler {
     private Looper looper = null;
     private OutPutType type = OutPutType.NORMAL;
 
-    public ExecHandler(){
+    public ExecResultHandler(){
         this.looper = (looper == null ? Looper.getMainLooper() : looper);
         handler = new MyHandler(this, this.looper);
     }
@@ -57,9 +57,9 @@ public abstract class ExecHandler {
      * Avoid leaks by using a non-anonymous handler class.
      */
     final private static class MyHandler extends Handler {
-        private final ExecHandler mResponder;
+        private final ExecResultHandler mResponder;
 
-        MyHandler(ExecHandler mResponder, Looper looper) {
+        MyHandler(ExecResultHandler mResponder, Looper looper) {
             super(looper);
             this.mResponder = mResponder;
         }

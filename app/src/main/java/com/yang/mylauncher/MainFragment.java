@@ -2,29 +2,25 @@ package com.yang.mylauncher;
 
 
 import android.app.Fragment;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
-import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
-import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.yang.mylauncher.command.AsyncCmdClient;
-import com.yang.mylauncher.command.BaseCommand;
+import com.yang.mylauncher.command.ExecCmdClient;
+import com.yang.mylauncher.command.ExecContext;
+import com.yang.mylauncher.command.raw.base;
 import com.yang.mylauncher.command.CommandFactory;
-import com.yang.mylauncher.command.ExecHandler;
+import com.yang.mylauncher.command.ExecResultHandler;
 import com.yang.mylauncher.command.OutPutType;
-import com.yang.mylauncher.command.SuggestHandler;
-import com.yang.mylauncher.command.SuggestItem;
+import com.yang.mylauncher.suggest.SuggestHandler;
 
 
 public class MainFragment extends Fragment implements EditText.OnEditorActionListener{
@@ -34,6 +30,7 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
     private EditText editText;
     private ScrollView scrollView;
     private LinearLayout sgContainer;
+    private ExecContext execContext;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -44,6 +41,7 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
         sgContainer = (LinearLayout) v.findViewById(R.id.suggestions_container);
         editText.setOnEditorActionListener(this);
         new SuggestHandler(getActivity(), editText, sgContainer);
+        execContext = new ExecContext(getActivity());
         return v;
     }
 
@@ -61,16 +59,16 @@ public class MainFragment extends Fragment implements EditText.OnEditorActionLis
     private void handle_input() {
         String e = editText.getText().toString().trim();
         if (!TextUtils.isEmpty(e)) {
-            appendText(e,OutPutType.INPUT);
-            BaseCommand command = CommandFactory.getCommand(e);
-            client.asyncExec(command,exeHandler);
+            appendText(">>"+e,OutPutType.INPUT);
+            base command = CommandFactory.getCommand(e,execContext);
+            client.exec(execContext,command,exeHandler);
             editText.setText("");
         }
     }
 
 
-    private AsyncCmdClient client =new AsyncCmdClient();
-    private ExecHandler exeHandler = new ExecHandler() {
+    private ExecCmdClient client =new ExecCmdClient();
+    private ExecResultHandler exeHandler = new ExecResultHandler() {
         @Override
         public void onSuccess(OutPutType type, String res) {
             appendText(res,type);

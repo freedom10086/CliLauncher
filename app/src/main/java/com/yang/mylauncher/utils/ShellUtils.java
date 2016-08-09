@@ -13,32 +13,27 @@ public class ShellUtils {
     //"ping -c 3 -w 100 " + ip
     //String[] command = new String[]{"/system/bin/ls", "-l", "/data" };
     //String[] cmds = new String[]{"/system/bin/cat", "/proc/version"};
-    public static String execShell(String[] command){
+    public static String execShell(String[] command) throws Exception{
         String s = TextUtils.join(" ",command);
         return execShell(s);
     }
 
-    public static String execShell(final String command){
+    public static String execShell(final String command) throws Exception{
         Process p = null;
-        try {
-            p = Runtime.getRuntime().exec(command);
-            int status = p.waitFor();
-            InputStream input = p.getInputStream();
-            BufferedReader in = new BufferedReader(new InputStreamReader(input));
-            StringBuilder buffer = new StringBuilder();
-            String line = "";
-            while ((line = in.readLine()) != null){
-                buffer.append(line).append("\n");
-            }
+        p = Runtime.getRuntime().exec(command);
+        int status = p.waitFor();
+        InputStream input = p.getInputStream();
+        BufferedReader in = new BufferedReader(new InputStreamReader(input));
+        StringBuilder buffer = new StringBuilder();
+        String line = "";
+        while ((line = in.readLine()) != null){
+            buffer.append(line).append("\n");
+        }
 
-            if (status == 0) {
-                return buffer.toString();
-            } else {
-                return "faild";
-            }
-        } catch (IOException | InterruptedException e) {
-            e.printStackTrace();
-            return "faild";
+        if (status == 0) {
+            return buffer.toString();
+        } else {
+            return "exec "+command+" faild !!";
         }
     }
 

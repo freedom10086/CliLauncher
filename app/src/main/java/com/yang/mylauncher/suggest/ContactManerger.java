@@ -1,4 +1,4 @@
-package com.yang.mylauncher.command;
+package com.yang.mylauncher.suggest;
 
 
 import android.Manifest;

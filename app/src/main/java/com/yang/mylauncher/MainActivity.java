@@ -4,9 +4,11 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -15,10 +17,13 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.yang.mylauncher.command.ContactManerger;
+import com.yang.mylauncher.command.raw.base;
+import com.yang.mylauncher.suggest.ContactManerger;
+import com.yang.mylauncher.suggest.SuggestProvider;
 import com.yang.mylauncher.utils.DeviceUtils;
 import com.yang.mylauncher.utils.NetworkUtils;
 import com.yang.mylauncher.utils.ShellUtils;
+import com.yang.mylauncher.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -60,23 +65,47 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 .replace(R.id.main_frame,current,MainFragment.TAG)
                 .commit();
 
-        new Thread(
-                new Runnable() {
-                    @Override
-                    public void run() {
-                        String[] command = new String[]{"/system/bin/ls", "-l", "./" };
-                        String res =  ShellUtils.execShell("ls -al storage");
-                        Log.e("cmd1","cmd1"+res);
-                    }
-                }
-        ).start();
-
         ContactManerger manerger =new ContactManerger();
         Map<String,ContactManerger.Contact> peoples =  manerger.getContacts(this);
         Set<String> names =  peoples.keySet();
         for(String name:names){
             Log.e("name","name"+name+"  "+peoples.get(name).toString());
         }
+
+
+        ContentValues values = new ContentValues();
+        values.put(SuggestProvider.COLUM_NAME, "name5");
+        values.put(SuggestProvider.COLUM_TYPE,0);
+        values.put(SuggestProvider.COLUM_USE_COUNT,2);
+        values.put(SuggestProvider.COLUM_USE_TIME, Utils.getCurrentTime());
+        getContentResolver().insert(SuggestProvider.CONTENT_URI, values);
+
+        String columns[] = new String[] {SuggestProvider.COLUM_NAME,SuggestProvider.COLUM_USE_TIME,SuggestProvider.COLUM_USE_COUNT};
+        Cursor cur = getContentResolver().query(SuggestProvider.CONTENT_URI,
+                columns,null,null,SuggestProvider.COLUM_USE_TIME+" DESC, "+SuggestProvider.COLUM_USE_COUNT+" DESC");
+        if(cur!=null){
+            while (cur.moveToNext()){
+                String name = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_NAME));
+                String time = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_USE_TIME));
+                int count = cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_USE_COUNT));
+                Log.e("db",name+time+"  "+count);
+            }
+            cur.close();
+        }
+
+        getContentResolver().update(SuggestProvider.CONTENT_URI,null,null,new String[]{"name5"});
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    String s = ShellUtils.execShell("ping -c 3 -w 100 www.baidu.com");
+                    Log.e("shell","Result "+s);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
 
     }
 

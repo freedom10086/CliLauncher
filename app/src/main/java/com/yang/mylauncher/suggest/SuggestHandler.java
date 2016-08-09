@@ -1,4 +1,4 @@
-package com.yang.mylauncher.command;
+package com.yang.mylauncher.suggest;
 
 import android.content.Context;
 import android.os.AsyncTask;
@@ -13,6 +13,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yang.mylauncher.Config;
+import com.yang.mylauncher.command.ArgType;
 
 
 public class SuggestHandler implements TextWatcher{
@@ -60,17 +61,11 @@ public class SuggestHandler implements TextWatcher{
                 int count = args.length;
                 items = new SuggestItem[count];
                 for(int i=0;i<count;i++){
-                    items[i] = new SuggestItem(args[i],ArgType.NORMAL,10);
+                    items[i] = new SuggestItem(args[i], ArgType.NORMAL,10);
                 }
             }else{
                 items = new SuggestItem[1];
                 items[0] = new SuggestItem(input,ArgType.NORMAL,5);
-            }
-
-            try {
-                Thread.sleep(500);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
             }
             return items;
         }

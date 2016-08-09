@@ -31,7 +31,7 @@ public class ConsoletextView extends TextView{
     private void init(Context context){
         strBuilder = new SpannableStringBuilder();
         this.context = context;
-        setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
+        setTextSize(TypedValue.COMPLEX_UNIT_SP,12.5f);
     }
 
 
