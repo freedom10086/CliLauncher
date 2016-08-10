@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 public class ShellUtils {
 
     //"ping -c 3 -w 100 " + ip
-    //String[] command = new String[]{"/system/bin/ls", "-l", "/data" };
+    //String[] commandStr = new String[]{"/system/bin/ls", "-l", "/data" };
     //String[] cmds = new String[]{"/system/bin/cat", "/proc/version"};
     public static String execShell(String[] command) throws Exception{
         String s = TextUtils.join(" ",command);

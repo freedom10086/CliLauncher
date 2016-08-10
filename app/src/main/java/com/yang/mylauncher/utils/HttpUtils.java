@@ -1,10 +1,8 @@
 package com.yang.mylauncher.utils;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
@@ -20,8 +18,8 @@ public class HttpUtils {
         URL resourceUrl = new URL(url);
         HttpURLConnection connection = (HttpURLConnection) resourceUrl.openConnection();
         // Settings
-        connection.setConnectTimeout(500);
-        connection.setReadTimeout(500);
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(1000);
         connection.setUseCaches(false);
         connection.setInstanceFollowRedirects(false);
         connection.setRequestMethod(method);

@@ -1,8 +1,8 @@
-package com.yang.mylauncher.command;
+package com.yang.mylauncher.helper;
 
-import android.util.Log;
-
-import com.yang.mylauncher.command.raw.base;
+import com.yang.mylauncher.cmd.base;
+import com.yang.mylauncher.data.ExecContext;
+import com.yang.mylauncher.data.OutPutType;
 
 import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
@@ -22,9 +22,10 @@ public class ExecCmdClient {
         this.threadPool = Executors.newFixedThreadPool(cpuNums * 2);
     }
 
-    public String exec(final ExecContext state, final base command, final ExecResultHandler handler) {
+    public String exec(final ExecContext state, final ExecResultHandler handler) {
+        final base command = state.command;
         if(command==null){
-            handler.sendMessage(ExecResultHandler.MSG_FAILURE,"error",OutPutType.ERROR);
+            handler.sendMessage(ExecResultHandler.MSG_FAILURE,"error", OutPutType.ERROR);
             return "error";
         }
         handler.sendMessage(ExecResultHandler.MSG_START,"Start",OutPutType.INFO);

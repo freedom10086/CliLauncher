@@ -1,8 +1,8 @@
-package com.yang.mylauncher.command.raw;
+package com.yang.mylauncher.cmd;
 
-import com.yang.mylauncher.AppData;
 import com.yang.mylauncher.MainActivity;
-import com.yang.mylauncher.command.ArgType;
+import com.yang.mylauncher.data.AppData;
+import com.yang.mylauncher.data.ArgType;
 
 import java.util.List;
 

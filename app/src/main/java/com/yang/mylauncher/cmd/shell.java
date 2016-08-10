@@ -1,21 +1,21 @@
-package com.yang.mylauncher.command.raw;
+package com.yang.mylauncher.cmd;
 
 import android.text.TextUtils;
 import android.util.Log;
 
-import com.yang.mylauncher.command.ArgType;
+import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.utils.ShellUtils;
 
 
 public class shell extends base{
     @Override
     protected String execCommand() {
-        String commandStr = EXECCONTEXT.command;
+        String commandStr = EXECCONTEXT.commandStr;
         if(EXECCONTEXT.args!=null&&EXECCONTEXT.args.length>0){
             commandStr=commandStr+" "+TextUtils.join(" ",EXECCONTEXT.args);
         }
         try {
-            Log.e("shell","command is :"+commandStr);
+            Log.e("shell","commandStr is :"+commandStr);
             return ShellUtils.execShell(commandStr);
         } catch (Exception e) {
             e.printStackTrace();

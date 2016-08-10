@@ -1,7 +1,6 @@
-package com.yang.mylauncher.suggest;
+package com.yang.mylauncher;
 
 import android.content.ContentProvider;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -13,19 +12,34 @@ import android.util.Log;
 
 import com.yang.mylauncher.utils.Utils;
 
+
+/**
+ * 提示 数据来源
+ * 包括命令 建议等
+ * 用数据库 存储
+ */
 public class SuggestProvider extends ContentProvider {
     private SQLiteDatabase sqlDB;
-    private DatabaseHelper    dbHelper;
+    private DatabaseHelper dbHelper;
 
-    public static final Uri CONTENT_URI = Uri.parse("content://com.yang.mylauncher.suggest.SuggestProvider");
+    public static final Uri CONTENT_URI = Uri.parse("content://com.yang.mylauncher.SuggestProvider");
     private static final String  DATABASE_NAME = "suggest.db";
     private static final int  DATABASE_VERSION= 1;
     private static final String TABLE_NAME= "suggests";
+
+
+    //id标识作用
     public static final String COLUM_ID = "_id";
+    //命令的名字
     public static final String COLUM_NAME = "name";
+    //命令的类型
     public static final String COLUM_TYPE = "type";
+    //使用计数
     public static final String COLUM_USE_COUNT = "count";
+    //最后使用时间
     public static final String COLUM_USE_TIME = "last_use_time";
+    //保存额外信息 //如保存类名等
+    public static final String COLUM_DATA = "data";
 
     public SuggestProvider() {
     }
@@ -60,6 +74,7 @@ public class SuggestProvider extends ContentProvider {
     public Cursor query(Uri uri, String[] projection, String selection,
                         String[] selectionArgs, String sortOrder) {
         //String sql = "SELECT * FROM " + TABLE_READ_HISTORY + " order by read_time desc limit " + num;
+
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         qb.setTables(TABLE_NAME);
@@ -97,12 +112,19 @@ public class SuggestProvider extends ContentProvider {
 
             String sql = "CREATE TABLE " + TABLE_NAME + "("
                     +COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    +COLUM_NAME+ " TEXT NOT NULL,"
-                    +COLUM_TYPE+ " INTEGER NOT NULL,"
-                    +COLUM_USE_COUNT+ " INTEGER NOT NULL,"
-                    +COLUM_USE_TIME+ " DATETIME NOT NULL"
+                    +COLUM_NAME+ " TEXT UNIQUE NOT NULL DEFAULT unknown,"
+                    +COLUM_TYPE+ " INTEGER NOT NULL DEFAULT 0,"
+                    +COLUM_USE_COUNT+ " INTEGER NOT NULL DEFAULT 0,"
+                    +COLUM_USE_TIME+ " DATETIME NOT NULL DEFAULT 0,"
+                    +COLUM_DATA+" TEXT"
                     + ")";
             db.execSQL(sql);
+
+            for(int i = 0;i<10;i++){
+                ContentValues values = new ContentValues();
+                values.put(SuggestProvider.COLUM_NAME, "name"+i);
+                db.insert(TABLE_NAME,"0",values);
+            }
             Log.e("DATABASE", TABLE_NAME+"数据表创建成功");
         }
 

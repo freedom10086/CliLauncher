@@ -1,4 +1,4 @@
-package com.yang.mylauncher;
+package com.yang.mylauncher.data;
 
 import android.content.Intent;
 import android.graphics.drawable.Drawable;

@@ -14,7 +14,7 @@
         android:scrollbars="vertical"
         android:scrollbarThumbVertical="@drawable/scrollbar_thumb">
 
-        <com.yang.mylauncher.ConsoletextView
+        <com.yang.mylauncher.view.ConsoletextView
             android:id="@+id/console_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />

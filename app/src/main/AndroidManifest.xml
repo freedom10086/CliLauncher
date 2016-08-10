@@ -33,8 +33,8 @@
         </activity>
 
         <provider
-            android:name=".suggest.SuggestProvider"
-            android:authorities="com.yang.mylauncher.suggest.SuggestProvider"
+            android:name=".SuggestProvider"
+            android:authorities="com.yang.mylauncher.SuggestProvider"
             android:enabled="true"
             android:exported="true"/>
     </application>

@@ -1,8 +1,10 @@
-package com.yang.mylauncher.command;
+package com.yang.mylauncher.helper;
 
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+
+import com.yang.mylauncher.data.OutPutType;
 
 
 public abstract class ExecResultHandler {

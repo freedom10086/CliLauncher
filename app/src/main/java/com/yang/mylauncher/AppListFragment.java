@@ -11,6 +11,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.yang.mylauncher.data.AppData;
+
 import java.util.List;
 
 

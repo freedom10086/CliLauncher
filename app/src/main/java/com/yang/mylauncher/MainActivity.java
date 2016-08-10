@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.ContentValues;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
@@ -17,14 +16,10 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
-import com.yang.mylauncher.command.raw.base;
-import com.yang.mylauncher.suggest.ContactManerger;
-import com.yang.mylauncher.suggest.SuggestProvider;
+import com.yang.mylauncher.data.AppData;
+import com.yang.mylauncher.helper.ContactManerger;
 import com.yang.mylauncher.utils.DeviceUtils;
-import com.yang.mylauncher.utils.HttpUtils;
 import com.yang.mylauncher.utils.NetworkUtils;
-import com.yang.mylauncher.utils.ShellUtils;
-import com.yang.mylauncher.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -73,14 +68,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Log.e("name","name"+name+"  "+peoples.get(name).toString());
         }
 
-
-        ContentValues values = new ContentValues();
-        values.put(SuggestProvider.COLUM_NAME, "name5");
-        values.put(SuggestProvider.COLUM_TYPE,0);
-        values.put(SuggestProvider.COLUM_USE_COUNT,2);
-        values.put(SuggestProvider.COLUM_USE_TIME, Utils.getCurrentTime());
-        getContentResolver().insert(SuggestProvider.CONTENT_URI, values);
-
         String columns[] = new String[] {SuggestProvider.COLUM_NAME,SuggestProvider.COLUM_USE_TIME,SuggestProvider.COLUM_USE_COUNT};
         Cursor cur = getContentResolver().query(SuggestProvider.CONTENT_URI,
                 columns,null,null,SuggestProvider.COLUM_USE_TIME+" DESC, "+SuggestProvider.COLUM_USE_COUNT+" DESC");
@@ -94,7 +81,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
             cur.close();
         }
 
-        getContentResolver().update(SuggestProvider.CONTENT_URI,null,null,new String[]{"name5"});
+        //getContentResolver().update(SuggestProvider.CONTENT_URI,null,null,new String[]{"name5"});
     }
 
 

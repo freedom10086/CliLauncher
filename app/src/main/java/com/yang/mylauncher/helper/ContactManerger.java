@@ -1,4 +1,4 @@
-package com.yang.mylauncher.suggest;
+package com.yang.mylauncher.helper;
 
 
 import android.Manifest;
@@ -16,9 +16,10 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * 联系人操作辅助类
+ */
 public class ContactManerger {
-
 
     public Map<String, Contact> getContacts(Context context) {
         Map<String, Contact> peoples = new LinkedHashMap<>();

@@ -1,11 +1,12 @@
-package com.yang.mylauncher.suggest;
+package com.yang.mylauncher.data;
 
-
-import android.graphics.Color;
 
 import com.yang.mylauncher.Config;
-import com.yang.mylauncher.command.ArgType;
 
+
+/**
+ * 单个提示数据
+ */
 public class SuggestItem {
     public String name;
     public ArgType type;

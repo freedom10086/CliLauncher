@@ -1,6 +1,6 @@
-package com.yang.mylauncher.command.raw;
+package com.yang.mylauncher.cmd;
 
-import com.yang.mylauncher.command.ArgType;
+import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.utils.DeviceUtils;
 
 

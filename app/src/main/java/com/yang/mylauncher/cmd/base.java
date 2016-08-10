@@ -1,8 +1,8 @@
-package com.yang.mylauncher.command.raw;
+package com.yang.mylauncher.cmd;
 
 
-import com.yang.mylauncher.command.ArgType;
-import com.yang.mylauncher.command.ExecContext;
+import com.yang.mylauncher.data.ArgType;
+import com.yang.mylauncher.data.ExecContext;
 
 public abstract class base {
 
@@ -12,13 +12,15 @@ public abstract class base {
         int arglen = (execContext.args==null)?0:execContext.args.length;
 
         if(arglen>getArgsNum()[1]){
-            return "Args number error !!! \ncommand \""+execContext.command+"\" max need "+getArgsNum()[1]+" args!!!";
+            return "Args number error !!! \ncommandStr \""+execContext.commandStr +"\" max need "+getArgsNum()[1]+" args!!!";
         }else if(arglen<getArgsNum()[0]){
-            return "Args number error !!! \ncommand \""+execContext.command+"\" at least need "+getArgsNum()[0]+" args!!!";
+            return "Args number error !!! \ncommandStr \""+execContext.commandStr +"\" at least need "+getArgsNum()[0]+" args!!!";
         }
 
 
-        return execCommand();
+        String s =  execCommand();
+        EXECCONTEXT.reset();
+        return s;
     }
 
 
