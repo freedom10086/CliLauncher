@@ -1,7 +1,6 @@
 package com.yang.mylauncher.cmd;
 
 
-import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.data.ExecContext;
 
 public abstract class base {
@@ -26,7 +25,7 @@ public abstract class base {
 
     protected abstract String execCommand() throws Exception;
 
-    public abstract ArgType argType(int i);
+    public abstract int argType(int i);
 
     public abstract int[] getArgsNum();
 

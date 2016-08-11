@@ -11,9 +11,10 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
 
+import com.yang.mylauncher.data.Contact;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,7 +22,7 @@ import java.util.Map;
  */
 public class ContactManerger {
 
-    public Map<String, Contact> getContacts(Context context) {
+    public static Map<String, Contact> getContacts(Context context) {
         Map<String, Contact> peoples = new LinkedHashMap<>();
         ContentResolver cr = context.getContentResolver();
         Cursor phone = cr.query(
@@ -54,7 +55,7 @@ public class ContactManerger {
 
 
     //以下是根据一个已知的电话号码，从通讯录中获取相对应的联系人姓名的代码
-    public String getNameFromNumBer(Context context, String phoneNum) {
+    public static String getNameFromNumBer(Context context, String phoneNum) {
         String contactName = "";
         ContentResolver cr = context.getContentResolver();
         Cursor pCur = cr.query(
@@ -69,7 +70,7 @@ public class ContactManerger {
     }
 
 
-    public void callPeopleByNumber(Context context,String num) {
+    public static void callPeopleByNumber(Context context,String num) {
         Intent intent = new Intent(Intent.ACTION_CALL);
         Uri data = Uri.parse("tel:" + "135xxxxxxxx");
         intent.setData(data);
@@ -82,33 +83,10 @@ public class ContactManerger {
         }
     }
 
-    public void callPeopleByName(Context context,String name){
+    public static void callPeopleByName(Context context,String name){
         //// TODO: 16-8-9
     }
 
-
-    public   class Contact{
-        private String name;
-        private int callTimes;
-        private List<String> phones;
-
-        public Contact(String name, String callTimes, List<String> phones) {
-            this.name = name;
-            this.callTimes = Integer.parseInt(callTimes);
-            this.phones = phones;
-        }
-
-        public void addPhone(String phone){
-            if(phones!=null){
-                phones.add(phone);
-            }
-        }
-
-        @Override
-        public String toString() {
-            return "name:"+name+" phone:"+phones.toString()+" calltimes:"+callTimes;
-        }
-    }
 
 }
 

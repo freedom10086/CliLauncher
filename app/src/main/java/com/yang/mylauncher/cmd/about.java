@@ -13,8 +13,8 @@ public class about extends base {
 
 
     @Override
-    public ArgType argType(int i) {
-        return null;
+    public int argType(int i) {
+        return ArgType.UNDEFINIED;
     }
 
     @Override

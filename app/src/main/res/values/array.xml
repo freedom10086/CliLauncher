@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="commands">
+        <item>about,关于</item>
+        <item>apps,应用,软件</item>
+        <item>memory,内存,ram</item>
+        <item>rom,硬盘</item>
+        <item>weather,天气</item>
+        <item>wifi,网络,无线网</item>
+    </string-array>
+
+    <string-array name="shellcommand">
+        <item>ls</item>
+        <item>netcfg|网络</item>
+    </string-array>
+</resources>

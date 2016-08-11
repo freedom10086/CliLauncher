@@ -1,44 +1,42 @@
 package com.yang.mylauncher.data;
 
-
 import com.yang.mylauncher.Config;
 
 
-/**
- * 单个提示数据
- */
-public class SuggestItem {
+public  class SuggestItem {
     public String name;
-    public ArgType type;
-    public int rate;
+    public int type;
     public int color;
+    public boolean clickRun;
+    public String classname;
 
-    public SuggestItem(String name, ArgType type, int rate) {
+    public SuggestItem(String name, int type,boolean clickRun) {
         this.name = name;
         this.type = type;
-        this.rate = rate;
+        this.clickRun =clickRun;
+
         switch (type){
-            case UNDEFINIED:
-            case NORMAL:
-            case PLAIN_TEXT:
+            case ArgType.UNDEFINIED:
+            case ArgType.PLANETEXT:
                 this.color = Config.SuggestNormal;
                 break;
-            case PEOPLE:
+            case ArgType.PEOPLE:
                 this.color = Config.SuggestPerson;
                 break;
-            case FILE:
+            case ArgType.FILE:
                 this.color = Config.SuggestFile;
                 break;
-            case APPS:
+            case ArgType.APP:
                 this.color = Config.SuggestBgApp;
                 break;
-            case SONG:
+            case ArgType.SONG:
                 this.color = Config.SuggestSongs;
                 break;
-            case COMMAND:
+            case ArgType.COMMAND:
                 this.color = Config.SuggestCommand;
                 break;
         }
 
     }
+
 }

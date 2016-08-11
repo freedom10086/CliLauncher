@@ -24,7 +24,7 @@ public class shell extends base{
     }
 
     @Override
-    public ArgType argType(int i) {
+    public int argType(int i) {
         return ArgType.UNDEFINIED;
     }
 

@@ -1,10 +1,9 @@
 package com.yang.mylauncher.cmd;
 
-import com.yang.mylauncher.MainActivity;
-import com.yang.mylauncher.data.AppData;
-import com.yang.mylauncher.data.ArgType;
+import android.database.Cursor;
 
-import java.util.List;
+import com.yang.mylauncher.SuggestProvider;
+import com.yang.mylauncher.data.ArgType;
 
 
 public class apps extends base{
@@ -12,24 +11,25 @@ public class apps extends base{
 
     @Override
     protected String execCommand() throws Exception{
+        StringBuilder db  =new StringBuilder();
+        String[] colums = new String[]{SuggestProvider.DISPLAY_NAME};
+        String selections = SuggestProvider.TYPE+" = ?";
+        String[] seleArgs = new String[]{String.valueOf(ArgType.APP)};
 
-        if(EXECCONTEXT.context instanceof MainActivity){
-            StringBuilder db  =new StringBuilder();
-            List<AppData> apps = ((MainActivity)EXECCONTEXT.context).getApps();
-            for (AppData d:apps){
-                db.append(d.name).append("\n");
+        Cursor cur = EXECCONTEXT.resolver.query(SuggestProvider.URI,colums,selections,seleArgs,null);
+        if(cur!=null){
+            while (cur.moveToNext()){
+                db.append(cur.getString(cur.getColumnIndex(SuggestProvider.DISPLAY_NAME))).append("\n");
             }
-
-            return db.toString();
-
+            cur.close();
         }
 
-        return null;
+        return db.toString();
     }
 
 
     @Override
-    public ArgType argType(int i) {
+    public int argType(int i) {
         return ArgType.UNDEFINIED;
     }
 

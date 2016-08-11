@@ -29,7 +29,7 @@ public class AppListFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_app_list, container, false);
         app_list = (GridView) v.findViewById(R.id.app_list);
         adapter = new MyAppListAdapter();
-        apps = ((MainActivity)getActivity()).getApps();
+        apps = ((MainActivity)getActivity()).apps;
 
         app_list.setAdapter(adapter);
         return v;

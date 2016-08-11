@@ -1,17 +1,21 @@
 package com.yang.mylauncher.cmd;
 
-public class unknown extends base {
+import com.yang.mylauncher.data.ArgType;
+
+
+public class people extends base {
 
 
     @Override
     protected String execCommand() {
-        return "command not found !!!";
+
+        return "people";
     }
 
 
     @Override
     public int argType(int i) {
-        return -1;
+        return ArgType.UNDEFINIED;
     }
 
     @Override

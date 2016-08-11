@@ -1,5 +1,6 @@
 package com.yang.mylauncher.data;
 
+import android.content.ContentResolver;
 import android.content.Context;
 
 import com.yang.mylauncher.cmd.base;
@@ -8,6 +9,7 @@ import com.yang.mylauncher.cmd.base;
 public class ExecContext {
     public ExecContext(Context context) {
         this.context = context;
+        this.resolver = context.getContentResolver();
     }
 
     public Context context;
@@ -15,6 +17,7 @@ public class ExecContext {
     public String[] args;
     public String commandStr;
     public base command;
+    public ContentResolver resolver;
 
 
     public int getArgsNum(){

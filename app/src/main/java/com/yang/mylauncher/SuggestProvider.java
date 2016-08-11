@@ -21,35 +21,37 @@ import com.yang.mylauncher.utils.Utils;
 public class SuggestProvider extends ContentProvider {
     private SQLiteDatabase sqlDB;
     private DatabaseHelper dbHelper;
+    public static final Uri URI = Uri.parse("content://com.yang.mylauncher.SuggestProvider");
 
-    public static final Uri CONTENT_URI = Uri.parse("content://com.yang.mylauncher.SuggestProvider");
     private static final String  DATABASE_NAME = "suggest.db";
     private static final int  DATABASE_VERSION= 1;
-    private static final String TABLE_NAME= "suggests";
+    private static final String TABLE_NAME = "command_suggests";
 
-
-    //id标识作用
-    public static final String COLUM_ID = "_id";
-    //命令的名字
-    public static final String COLUM_NAME = "name";
-    //命令的类型
-    public static final String COLUM_TYPE = "type";
+    //显示的名字
+    public static final String DISPLAY_NAME = "display_name";
+    //根据输入搜索的名字
+    public static final String SEARCH_NAME = "search_txt";
     //使用计数
-    public static final String COLUM_USE_COUNT = "count";
+    public static final String USE_COUNT = "use_count";
     //最后使用时间
-    public static final String COLUM_USE_TIME = "last_use_time";
-    //保存额外信息 //如保存类名等
-    public static final String COLUM_DATA = "data";
+    public static final String USE_TIME = "last_use_time";
+    //保存类名
+    public static final String CMD_CLASS_NAME = "class_name";
+    //保存类名
+    public static final String CMD_CLICK_RUN = "runable";
+    //保存类型
+    public static final String TYPE = "type";
 
     public SuggestProvider() {
+
     }
 
     @Override
     public int delete(Uri uri, String selection, String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getWritableDatabase();
-        return db.delete(TABLE_NAME,selection,selectionArgs);
-        //how to use
-        //getContentResolver().delete(SuggestProvider.CONTENT_URI,SuggestProvider.COLUM_NAME+"=? ",new String[]{"name4"});
+        int i =  db.delete(TABLE_NAME,selection,selectionArgs);
+        Log.e("DB","delete "+i+selection);
+        return i;
     }
 
     @Override
@@ -61,6 +63,7 @@ public class SuggestProvider extends ContentProvider {
     public Uri insert(Uri uri, ContentValues values) {
         sqlDB = dbHelper.getWritableDatabase();
         long rowId =  sqlDB.insert(TABLE_NAME,"0",values);
+        Log.e("DATABASE", "插入"+rowId);
         return null;
     }
 
@@ -71,10 +74,8 @@ public class SuggestProvider extends ContentProvider {
     }
 
     @Override
-    public Cursor query(Uri uri, String[] projection, String selection,
-                        String[] selectionArgs, String sortOrder) {
+    public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
         //String sql = "SELECT * FROM " + TABLE_READ_HISTORY + " order by read_time desc limit " + num;
-
         SQLiteQueryBuilder qb = new SQLiteQueryBuilder();
         SQLiteDatabase db = dbHelper.getReadableDatabase();
         qb.setTables(TABLE_NAME);
@@ -91,7 +92,7 @@ public class SuggestProvider extends ContentProvider {
     @Override
     public int update(Uri uri, ContentValues values, String selection,String[] selectionArgs) {
         SQLiteDatabase db = dbHelper.getReadableDatabase();
-        String sql = "UPDATE " + TABLE_NAME + " SET "+COLUM_USE_COUNT+"="+COLUM_USE_COUNT+"+1,"+COLUM_USE_TIME+"=? WHERE "+COLUM_NAME+"=?";
+        String sql = "UPDATE " + TABLE_NAME + " SET "+ USE_COUNT +"="+ USE_COUNT +"+1,"+ USE_TIME +"=? WHERE "+ DISPLAY_NAME +"=?";
         Log.e("sql",sql);
         String time = Utils.getCurrentTime();
         String name = selectionArgs[0];
@@ -111,21 +112,16 @@ public class SuggestProvider extends ContentProvider {
         public void onCreate(SQLiteDatabase db) {
 
             String sql = "CREATE TABLE " + TABLE_NAME + "("
-                    +COLUM_ID + " INTEGER PRIMARY KEY AUTOINCREMENT,"
-                    +COLUM_NAME+ " TEXT UNIQUE NOT NULL DEFAULT unknown,"
-                    +COLUM_TYPE+ " INTEGER NOT NULL DEFAULT 0,"
-                    +COLUM_USE_COUNT+ " INTEGER NOT NULL DEFAULT 0,"
-                    +COLUM_USE_TIME+ " DATETIME NOT NULL DEFAULT 0,"
-                    +COLUM_DATA+" TEXT"
+                    + DISPLAY_NAME + " TEXT PRIMARY KEY,"
+                    + SEARCH_NAME + " TEXT NOT NULL,"
+                    + TYPE + " INTEGER NOT NULL DEFAULT -1,"
+                    + USE_COUNT + " INTEGER NOT NULL DEFAULT 0,"
+                    + USE_TIME + " DATETIME NOT NULL DEFAULT 0,"
+                    + CMD_CLASS_NAME +" TEXT NOT NULL DEFAULT unknown,"
+                    + CMD_CLICK_RUN + " INTEGER NOT NULL DEFAULT 0"
                     + ")";
             db.execSQL(sql);
-
-            for(int i = 0;i<10;i++){
-                ContentValues values = new ContentValues();
-                values.put(SuggestProvider.COLUM_NAME, "name"+i);
-                db.insert(TABLE_NAME,"0",values);
-            }
-            Log.e("DATABASE", TABLE_NAME+"数据表创建成功");
+            Log.e("DATABASE", TABLE_NAME +"数据表创建成功");
         }
 
         @Override

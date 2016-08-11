@@ -1,7 +1,7 @@
 package com.yang.mylauncher.helper;
 
 import android.content.Context;
-import android.database.Cursor;
+import android.graphics.Color;
 import android.os.AsyncTask;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -15,27 +15,32 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.yang.mylauncher.Config;
-import com.yang.mylauncher.SuggestProvider;
 import com.yang.mylauncher.cmd.base;
 import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.data.ExecContext;
 import com.yang.mylauncher.data.SuggestItem;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
  * 处理提示 和 得到命令
  * 根据输入得到 要执行的命令 和 提示命令和提示参数
  */
-public class InputHandler implements TextWatcher,EditText.OnEditorActionListener{
+public class InputHandler implements TextWatcher,EditText.OnEditorActionListener,View.OnClickListener{
 
     private EditText editText;
     private LinearLayout suggestContainer;
     private GetSuggestTask task;
     private Context context;
     private ExecContext execContext;
-    private boolean canCancle = true;
     private onEnterClickListener onEnterClickListener;
+
+    private int currentpos = 0;
+    private List<String> commadArgs = new ArrayList<>();
+    private base currentCmd = null;
+
 
     public InputHandler(ExecContext execContext,
                         EditText editText, LinearLayout suggestContainer) {
@@ -57,19 +62,33 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
     }
 
     @Override
-    public void onTextChanged(CharSequence charSequence, int start, int before, int connt) {
+    public void onTextChanged(CharSequence charSequence, int start, int before, int count) {
         if(task!=null&&task.getStatus()!= AsyncTask.Status.FINISHED){
             task.cancel(true);
         }
         task = new GetSuggestTask();
         String input =  editText.getText().toString();
-        task.execute(input);
+        if(TextUtils.isEmpty(input.trim())){
+            currentCmd = null;
+            currentpos = 0;
+            commadArgs.clear();
+        }else{
+            //// TODO: 16-8-11  not need always clear
+            commadArgs.clear();
+            String[] ca = input.split(" +");
+            currentpos = (input.endsWith(" "))?ca.length:ca.length-1;
+            for(int i=0;i<ca.length;i++){
+                commadArgs.add(ca[i]);
+            }
+        }
+
+        task.execute();
     }
 
     @Override
     public void afterTextChanged(Editable editable) {
-    }
 
+    }
 
     @Override
     public boolean onEditorAction(TextView textView, int i, KeyEvent keyEvent) {
@@ -78,6 +97,13 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
         if (i == EditorInfo.IME_ACTION_SEND
                 &&onEnterClickListener!=null
                 &&!TextUtils.isEmpty(input)) {
+            execContext.command = currentCmd;
+            execContext.commandStr = commadArgs.get(0);
+            execContext.args = new String[commadArgs.size()-1];
+            for(int j=1;j<commadArgs.size();j++){
+                execContext.args[j-1] = commadArgs.get(j);
+            }
+
             if(execContext.command==null){
                 new GetCommandTask().execute(input);
             }else{
@@ -88,13 +114,37 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
         return handled;
     }
 
+    @Override
+    public void onClick(View view) {
+        if(view instanceof TextView){
+            int tag = (int) view.getTag()+1;
+            String sgText = ((TextView)view).getText().toString()+" ";
+            String edtext  = editText.getText().toString().replaceAll(" +"," ");
+            if(!(tag>commadArgs.size())){
+                if(TextUtils.isEmpty(edtext.trim())){
+                    editText.setText(sgText);
+                }else if(edtext.endsWith(" ")){
+                    editText.append(sgText);
+                }else if(edtext.contains(" ")){
+                    int pos = edtext.lastIndexOf(' ');
+                    edtext = edtext.substring(0,pos)+" "+sgText;
+                    editText.setText(edtext);
+                }else{
+                    editText.setText(sgText);
+                }
+                editText.setSelection(editText.length());
+            }
+            Log.e("click",((int)view.getTag())+" click");
+        }
+
+    }
+
 
     private class GetCommandTask extends AsyncTask<String,Void,Void>{
-
         @Override
         protected Void doInBackground(String... strings) {
             String input = strings[0];
-            execContext.command = getCommand(input.toLowerCase());
+            execContext.command = CommandUtils.getCommand(context,input.toLowerCase());
             execContext.commandStr = input.trim().toLowerCase();
             return null;
         }
@@ -107,149 +157,50 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
         }
     }
 
-
-    private String recordStr = null;
-    private class GetSuggestTask extends AsyncTask<String,Void,SuggestItem[]>{
-
+    private class GetSuggestTask extends AsyncTask<Void,Void,List<SuggestItem>>{
         @Override
-        protected void onCancelled() {
-            if(canCancle){
-                super.onCancelled();
-                Log.e("cancle","===== task cancel=====");
-            }
-            Log.e("cancle","===== get command task can not cancel=====");
-        }
-
-        @Override
-        protected SuggestItem[] doInBackground(String... strings) {
-            String input =  strings[0];
-            SuggestItem[] items = null;
-            String[] args = input.trim().split(" +");
-            String trimInput = input.trim().toLowerCase();
-            int len = args.length;
-            execContext.args = null;
-
-            if(input.trim().isEmpty()){
-                items = getEmptyCommandSuggest();
-            }else if(len==1){
-                if(recordStr==null||!recordStr.equals(trimInput)){
-                    recordStr = trimInput;
-                    if(input.endsWith(" ")){
-                        canCancle = false;
-                        execContext.command = getCommand(trimInput);
-                        execContext.commandStr = trimInput;
-                        canCancle = true;
-                        items = getArgsSuggest(1);
-                    }else{
-                        recordStr = null;
-                        execContext.command = null;
-                        execContext.commandStr = null;
-                        items = getCommandSuggest(input);
+        protected List<SuggestItem> doInBackground(Void... voids) {
+            List<SuggestItem> items =null;
+            if(currentpos==0&&commadArgs.size()==0){
+                items = getEmptySuggest();
+            }else if(currentpos==0){
+                items = CommandUtils.getCommandSuggest(context,commadArgs.get(0));
+            }else{
+                //输入空格 推断下一个参数
+                if(currentpos==commadArgs.size()){
+                    if(currentpos==1){
+                        currentCmd = CommandUtils.getCommand(context,commadArgs.get(0));
                     }
+                    items = getArgsSuggest(null,currentpos);
+                }else{
+                    items = getArgsSuggest(commadArgs.get(commadArgs.size()-1),currentpos);
                 }
-            }else{// len >1
-                String[] argss = new String[len-1];
-                System.arraycopy(args, 1, argss, 0, len - 1);
-                int pos =input.endsWith(" ")?len:len-1;
-                execContext.args = argss;
-                items = getArgsSuggest(pos);
             }
             return items;
         }
 
-
         @Override
-        protected void onPostExecute(SuggestItem[] items) {
+        protected void onPostExecute(List<SuggestItem> items) {
             super.onPostExecute(items);
             notifyDataChange(items);
         }
     }
 
-    //根据输入获得的命令
-    private base getCommand(String commandStr){
-        try {
-            base cmd = (base) Class.forName(getCommandClassName(commandStr))
-                    .newInstance();
-            Log.e("getCommand","get command"+commandStr);
-            return cmd;
-        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
-            e.printStackTrace();
-        }
+
+    private List<SuggestItem> getEmptySuggest(){
         return null;
     }
 
-    //获得命令的建议
-    private SuggestItem[] getCommandSuggest(String commandinput){
-        //从数据库获得命令
-        SuggestItem[] items = null;
-        String[] colums = new String[]{
-                SuggestProvider.COLUM_ID,
-                SuggestProvider.COLUM_USE_COUNT,
-                SuggestProvider.COLUM_NAME,
-                SuggestProvider.COLUM_TYPE,
-                SuggestProvider.COLUM_DATA};
-        String selections = SuggestProvider.COLUM_NAME +" LIKE ?";
-
-        String[] selectargs = new String[]{"%" +commandinput+"%"};
-
-        String order = SuggestProvider.COLUM_USE_TIME+" DESC, "+SuggestProvider.COLUM_USE_COUNT+" DESC";
-
-        Cursor cur =  context.getContentResolver().query(
-                SuggestProvider.CONTENT_URI,
-                colums,
-                selections,
-                selectargs,
-                order);
-        if(cur!=null){
-            items = new SuggestItem[cur.getCount()];
-            while (cur.moveToNext()){
-                String name = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_NAME));
-                int type =  cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_TYPE));
-                String data = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_DATA));
-                int usecount = cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_USE_COUNT));
-                items[cur.getPosition()] = new SuggestItem(name, ArgType.NORMAL,usecount);
-            }
-            cur.close();
-        }
-        return items;
-    }
-
-    //获得空输入的建议
-    private SuggestItem[] getEmptyCommandSuggest(){
-        //从数据库获得命令
-        SuggestItem[] items = null;
-        String[] colums = new String[]{
-                SuggestProvider.COLUM_ID,
-                SuggestProvider.COLUM_USE_COUNT,
-                SuggestProvider.COLUM_NAME,
-                SuggestProvider.COLUM_TYPE,
-                SuggestProvider.COLUM_DATA};
-
-        String order = SuggestProvider.COLUM_USE_TIME+" DESC, "+SuggestProvider.COLUM_USE_COUNT+" DESC";
-        Cursor cur =  context.getContentResolver().query(SuggestProvider.CONTENT_URI, colums, null, null, order);
-        if(cur!=null){
-            items = new SuggestItem[cur.getCount()];
-            while (cur.moveToNext()){
-                String name = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_NAME));
-                int type =  cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_TYPE));
-                String data = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_DATA));
-                int usecount = cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_USE_COUNT));
-                items[cur.getPosition()] = new SuggestItem(name, ArgType.NORMAL,usecount);
-                Log.e("db",name+"  "+type+"  "+data);
-            }
-            cur.close();
-        }
-        return items;
-    }
-
     //获得参数的建议
-    private SuggestItem[] getArgsSuggest(int pos){
+    private List<SuggestItem> getArgsSuggest(String inputarg, int pos){
 
-        //// TODO: 16-8-10
-        return new SuggestItem[]{new SuggestItem("pos"+pos,ArgType.NORMAL,0)};
+        List<SuggestItem> items = new ArrayList<>();
+        items.add(new SuggestItem(pos+"|"+inputarg,ArgType.PLANETEXT,false));
+        //// TODO: 16-8-11
+        return items;
     }
 
-    private TextView getSingleView(View v, SuggestItem item) {
+    private TextView getSingleView(View v,SuggestItem item) {
         TextView textView = (TextView) v;
         if(textView==null){
             textView = new TextView(context);
@@ -260,19 +211,21 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
             textView.setMaxEms(8);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
-            textView.setTextColor(Config.colorWhite);
+            textView.setTextColor(Color.BLACK);
             textView.setLayoutParams(params);
             textView.setMaxLines(1);
+            textView.setTag(currentpos);
+            textView.setOnClickListener(this);
         }
         textView.setBackgroundColor(item.color);
         textView.setText(item.name);
         return textView;
     }
 
-    private void notifyDataChange(SuggestItem[] items){
+    private void notifyDataChange(List<SuggestItem> items){
         if(suggestContainer==null)
             return;
-        int count = (items==null?0:items.length);
+        int count = (items==null?0:items.size());
         int preCount = suggestContainer.getChildCount();
         //合理的复用之前的textview
         if(preCount>count){
@@ -281,21 +234,13 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
         for(int i = 0;i<count;i++){
             View  view = suggestContainer.getChildAt(i);
             if(view==null){
-                suggestContainer.addView(getSingleView(null,items[i]));
+                suggestContainer.addView(getSingleView(null,items.get(i)));
             }else{
-                getSingleView(view,items[i]);
+                getSingleView(view,items.get(i));
             }
         }
     }
 
-
-    private static String getCommandClassName(String s){
-        final String PACKNAME = base.class.getPackage().getName();
-        if(s.equals("ls")||s.equals("netcfg")||s.equals("ping")){
-            return PACKNAME+".shell";
-        }
-        return PACKNAME+"."+s;
-    }
 
     public interface onEnterClickListener{
        void onEnterClick(String input,ExecContext context);

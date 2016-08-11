@@ -4,34 +4,27 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.content.Intent;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageManager;
-import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
 
 import com.yang.mylauncher.data.AppData;
-import com.yang.mylauncher.helper.ContactManerger;
+import com.yang.mylauncher.helper.LoadDbUtil;
 import com.yang.mylauncher.utils.DeviceUtils;
 import com.yang.mylauncher.utils.NetworkUtils;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 public class MainActivity extends Activity implements View.OnClickListener{
 
     private FragmentManager manager;
     private Fragment current;
     private TextView info_text1,info_text2;
-    private List<AppData> apps;
+    public List<AppData> apps =new ArrayList<>();
 
 
     @Override
@@ -54,37 +47,14 @@ public class MainActivity extends Activity implements View.OnClickListener{
         DeviceUtils.getBootTime();
         info_text1.setText(menufacture+" "+model+" "+netWork);
         info_text2.setText("RAM:"+memAva+"/"+menTotal+"MB  ROM:"+rom[0]+"/"+rom[1]+"MB");
-        getApps();
 
         current = new MainFragment();
         manager.beginTransaction()
                 .replace(R.id.main_frame,current,MainFragment.TAG)
                 .commit();
 
-        ContactManerger manerger =new ContactManerger();
-        Map<String,ContactManerger.Contact> peoples =  manerger.getContacts(this);
-        Set<String> names =  peoples.keySet();
-        for(String name:names){
-            Log.e("name","name"+name+"  "+peoples.get(name).toString());
-        }
-
-        String columns[] = new String[] {SuggestProvider.COLUM_NAME,SuggestProvider.COLUM_USE_TIME,SuggestProvider.COLUM_USE_COUNT};
-        Cursor cur = getContentResolver().query(SuggestProvider.CONTENT_URI,
-                columns,null,null,SuggestProvider.COLUM_USE_TIME+" DESC, "+SuggestProvider.COLUM_USE_COUNT+" DESC");
-        if(cur!=null){
-            while (cur.moveToNext()){
-                String name = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_NAME));
-                String time = cur.getString(cur.getColumnIndex(SuggestProvider.COLUM_USE_TIME));
-                int count = cur.getInt(cur.getColumnIndex(SuggestProvider.COLUM_USE_COUNT));
-                Log.e("db",name+time+"  "+count);
-            }
-            cur.close();
-        }
-
-        //getContentResolver().update(SuggestProvider.CONTENT_URI,null,null,new String[]{"name5"});
+        new UpdateDbTask().execute();
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -92,49 +62,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
             Fragment f = manager.findFragmentByTag(MainFragment.TAG);
             switchContent(f,MainFragment.TAG);
         }
-    }
-
-
-    private class getAppTask extends AsyncTask<Void, Void, List<AppData>>{
-        @Override
-        protected List<AppData> doInBackground(Void... voids) {
-            final PackageManager pm = getPackageManager();
-            //get a list of installed apps.
-            List<AppData> apps = new ArrayList<>();
-            Log.e("time","start :"+System.currentTimeMillis());
-            List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
-            for (ApplicationInfo packageInfo : packages) {
-                Intent intet = pm.getLaunchIntentForPackage(packageInfo.packageName);
-                if(intet!=null){
-                    //String name, String pkg, Intent intent, Drawable icon
-                    AppData data = new AppData(packageInfo.loadLabel(pm),
-                            packageInfo.packageName,
-                            intet,
-                            packageInfo.loadIcon(pm));
-                    apps.add(data);
-                }
-            }
-            Log.e("time","end :"+System.currentTimeMillis());
-            return apps;
-        }
-
-        @Override
-        protected void onPostExecute(List<AppData> appDatas) {
-            super.onPostExecute(appDatas);
-            apps.clear();
-            apps.addAll(appDatas);
-            findViewById(R.id.btn_show_apps).setOnClickListener(MainActivity.this);
-            findViewById(R.id.btn_show_apps).setVisibility(View.VISIBLE);
-
-        }
-    }
-
-    public List<AppData> getApps() {
-        if(apps==null){
-            apps = new ArrayList<>();
-            new getAppTask().execute();
-        }
-        return apps;
     }
 
     @Override
@@ -165,7 +92,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
 
-
     /**
      * 设置透明状态栏(api >= 19方可使用)
      * <p>android:clipToPadding="true"
@@ -177,6 +103,28 @@ public class MainActivity extends Activity implements View.OnClickListener{
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             //透明导航栏
             getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
+        }
+    }
+
+
+    private class UpdateDbTask extends AsyncTask<Void,Void,List<AppData>>{
+
+        @Override
+        protected List<AppData> doInBackground(Void... voids) {
+
+            //load commadn to db
+            LoadDbUtil.updateDabase(MainActivity.this);
+
+            //load app to db
+            return LoadDbUtil.updateApp(MainActivity.this);
+        }
+
+        @Override
+        protected void onPostExecute(List<AppData> appsD) {
+            apps.clear();
+            apps.addAll(appsD);
+            findViewById(R.id.btn_show_apps).setOnClickListener(MainActivity.this);
+            findViewById(R.id.btn_show_apps).setVisibility(View.VISIBLE);
         }
     }
 

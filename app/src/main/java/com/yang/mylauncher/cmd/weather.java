@@ -9,7 +9,7 @@ import org.json.JSONObject;
 import java.util.Iterator;
 
 
-public class wether extends base{
+public class weather extends base{
 
     private static final String WETHER_NOW_URL = "https://api.thinkpage.cn/v3/weather/now.json?key=swqqluelawaa42jk&location=ip&language=zh-Hans&unit=c";
     private static final String WETHER_CUS = "https://api.thinkpage.cn/v3/weather/now.json?key=swqqluelawaa42jk&language=zh-Hans&unit=c&location=";
@@ -43,7 +43,6 @@ public class wether extends base{
                     }
                     sb.append("\n");
                     sb.append("last_update:").append(b.getString("last_update")).append("\n");
-
                 }
             }
 
@@ -53,7 +52,7 @@ public class wether extends base{
     }
 
     @Override
-    public ArgType argType(int i) {
+    public int argType(int i) {
         return ArgType.UNDEFINIED;
     }
 
