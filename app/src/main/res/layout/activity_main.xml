@@ -11,13 +11,14 @@
     <RelativeLayout
         android:id="@+id/info_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingBottom="4dp">
 
         <TextView
             android:id="@+id/info_1"
             android:text="m1 note"
             android:textSize="12sp"
-            android:textColor="@color/colorInfo"
+            android:textColor="@color/colorError"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/btn_show_apps" />
@@ -38,7 +39,6 @@
             android:layout_centerVertical="true"
             android:layout_alignParentEnd="true" />
     </RelativeLayout>
-
 
     <FrameLayout
         android:id="@+id/main_frame"

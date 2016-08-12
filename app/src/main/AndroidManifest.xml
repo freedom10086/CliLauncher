@@ -39,6 +39,12 @@
             android:authorities="com.yang.mylauncher.SuggestProvider"
             android:enabled="true"
             android:exported="true"/>
+        <receiver android:name=".view.AppChangeReceiver">
+            <intent-filter>
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

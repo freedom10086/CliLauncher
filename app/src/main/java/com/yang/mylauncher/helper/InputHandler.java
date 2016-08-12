@@ -210,7 +210,7 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
                     LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
             params.setMargins(10,5,10,5);
             textView.setPadding(10,5,10,5);
-            textView.setMaxEms(8);
+            textView.setMaxEms(5);
             textView.setEllipsize(TextUtils.TruncateAt.END);
             textView.setTextSize(TypedValue.COMPLEX_UNIT_SP,13);
             textView.setTextColor(Color.BLACK);
@@ -218,6 +218,7 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
             textView.setMaxLines(1);
             textView.setTag(currentpos);
             textView.setOnClickListener(this);
+            textView.setClickable(true);
         }
         textView.setBackgroundColor(item.color);
         textView.setText(item.name);

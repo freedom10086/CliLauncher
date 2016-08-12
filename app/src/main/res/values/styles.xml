@@ -1,14 +1,17 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="AppTheme" parent="android:Theme.Light.NoTitleBar">
-        <!-- Customize your theme here. -->
+    <style name="AppTheme" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/colorBlack</item>
+        <item name="android:windowNoTitle">true</item>
         <item name="android:fitsSystemWindows">true</item>
         <item name="android:windowBackground">@color/colorBlack</item>
         <item name="android:textColor">@color/colorWhite</item>
         <item name="android:editTextColor">@color/colorInput</item>
         <item name="android:textColorHint">@color/colorHint</item>
         <item name="android:typeface">monospace</item>
+        <!--edittext 光标-->
+        <item name="android:textCursorDrawable">@drawable/edittext_cursor</item>
     </style>
 
 </resources>

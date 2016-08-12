@@ -2,10 +2,9 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item>
         <shape android:shape="rectangle">
-            <corners android:radius="1dp"/>
-            <size android:width="4dp" android:height="12dp"/>
+            <corners android:radius="2dp"/>
+            <size android:width="4dp" android:height="8dp"/>
             <solid android:color="@color/colorScrollBar"/>
-
         </shape>
     </item>
 </selector>

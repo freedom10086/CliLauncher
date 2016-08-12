@@ -11,7 +11,7 @@
         android:scrollbarThumbVertical="@drawable/scrollbar_thumb"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/ed_search"/>
+        android:layout_above="@+id/ed_search" />
 
     <EditText
         android:layout_alignParentBottom="true"
@@ -26,6 +26,5 @@
         android:maxLines="1"
         android:inputType="text"
         android:selectAllOnFocus="false"
-        android:imeOptions="actionSearch"
-        android:textCursorDrawable="@drawable/edittext_cursor" />
+        android:imeOptions="actionSearch" />
 </RelativeLayout>

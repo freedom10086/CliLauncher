@@ -1,6 +1,7 @@
 package com.yang.mylauncher;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -10,6 +11,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
 import android.widget.Filter;
@@ -19,6 +21,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yang.mylauncher.data.AppData;
+import com.yang.mylauncher.utils.AppUtils;
 import com.yang.mylauncher.utils.ImeUtil;
 import com.yang.mylauncher.utils.PinyinUtil;
 
@@ -29,7 +32,7 @@ import java.util.List;
 import java.util.Locale;
 
 
-public class AppListFragment extends Fragment implements TextWatcher {
+public class AppListFragment extends Fragment implements TextWatcher,AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     public static final String TAG = "APPS";
     private GridView app_list;
@@ -50,7 +53,8 @@ public class AppListFragment extends Fragment implements TextWatcher {
         app_list.setAdapter(adapter);
         editText = (EditText) v.findViewById(R.id.ed_search);
         editText.addTextChangedListener(this);
-
+        app_list.setOnItemClickListener(this);
+        app_list.setOnItemLongClickListener(this);
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -86,6 +90,17 @@ public class AppListFragment extends Fragment implements TextWatcher {
     @Override
     public void afterTextChanged(Editable editable) {
 
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        getActivity().startActivity(new Intent(filterApps.get(i).intent));
+    }
+
+    @Override
+    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int i, long l) {
+        AppUtils.uninstall(getActivity(),filterApps.get(i).pkg);
+        return false;
     }
 
 
@@ -142,24 +157,15 @@ public class AppListFragment extends Fragment implements TextWatcher {
 
         ImageView icon;
         TextView name;
-        LinearLayout main_item;
         AppItemViewHolder(View itemView) {
             icon = (ImageView) itemView.findViewById(R.id.icon);
             name = (TextView) itemView.findViewById(R.id.name);
-            main_item = (LinearLayout) itemView.findViewById(R.id.main_item);
         }
 
         void setData(final int pos){
             final AppData i = filterApps.get(pos);
             icon.setImageDrawable(i.icon);
             name.setText(i.name);
-
-            main_item.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getActivity().startActivity(i.intent);
-                }
-            });
         }
     }
 }

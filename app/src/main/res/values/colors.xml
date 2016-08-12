@@ -15,5 +15,5 @@
     <color name="coloeSuggestBgS">@android:color/holo_orange_light</color>
 
     <color name="colorHint">#ff888888</color>
-    <color name="colorScrollBar">#33A5DC86</color>
+    <color name="colorScrollBar">#1fffffff</color>
 </resources>
