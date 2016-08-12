@@ -15,11 +15,7 @@ public abstract class base {
         }else if(arglen<getArgsNum()[0]){
             return "Args number error !!! \ncommandStr \""+execContext.commandStr +"\" at least need "+getArgsNum()[0]+" args!!!";
         }
-
-
-        String s =  execCommand();
-        EXECCONTEXT.reset();
-        return s;
+        return execCommand();
     }
 
 

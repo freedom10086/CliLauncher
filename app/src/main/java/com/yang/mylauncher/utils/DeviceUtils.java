@@ -2,7 +2,6 @@ package com.yang.mylauncher.utils;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -13,11 +12,9 @@ import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileFilter;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.regex.Pattern;
 
 
 
@@ -116,96 +113,44 @@ public class DeviceUtils {
 
     //CPU个数
     public static int getNumCores() {
-
-        class CpuFilter implements FileFilter {
-            @Override
-            public boolean accept(File pathname) {
-                return Pattern.matches("cpu[0-9]", pathname.getName());
-            }
-        }
-        try {
-            File dir = new File("/sys/devices/system/cpu/");
-            File[] files = dir.listFiles(new CpuFilter());
-            return files.length;
-        } catch(Exception e) {
-            e.printStackTrace();
-            return 1;
-        }
-    }
-
-    public static int getNumCores2(){
-        FileReader fr = null;
-        int num = 1;
-        try {
-            fr = new FileReader("/proc/cpufreq/cpufreq_over_max_cpu");
-            BufferedReader br = new BufferedReader(fr);
-            String text = br.readLine().trim();
-            num =  Integer.parseInt(text);
-        } catch (IOException e) {
-            e.printStackTrace();
-            num = 1;
-        }
-
-        return num;
+        return  Runtime.getRuntime().availableProcessors();
     }
 
 
     //获得cpu频率信息
     //[0] min [1]now [2]max 单位MHZ
-    public static String[] getCpuFreq(int num){
-        String[] result = new String[3];
-
-        ////// 获取CPU最小频率（单位MHZ）：
-        String minFreq = "";
-        ProcessBuilder cmd;
+    public static String[] getCpuFreq(int num) throws Exception{
+        String[] result = new String[2];
         try {
-            FileReader fr = new FileReader("/sys/devices/system/cpu/cpu"+num+"/cpufreq/cpuinfo_min_freq");
-            BufferedReader br = new BufferedReader(fr);
-            String text = br.readLine();
-            minFreq = text.trim();
-            if(minFreq.length()>3){
-                minFreq = minFreq.substring(0,minFreq.length()-3)+"MHZ";
-            }
-        } catch (IOException ex) {
-            ex.printStackTrace();
-            minFreq = "N/A";
-        }
-        result[0] = minFreq.trim();
-
-        //实时获取CPU当前频率（单位MHZ）：
-        String nowFreq = "N/A";
-        try {
-            FileReader fr = new FileReader("/sys/devices/system/cpu/cpu"+num+"/cpufreq/scaling_cur_freq");
+            //实时获取CPU当前频率（单位MHZ）：
+            String nowFreq = "N/A";
+            FileReader fr = new FileReader("/sys/devices/system/cpu/cpu" + num + "/cpufreq/scaling_cur_freq");
             BufferedReader br = new BufferedReader(fr);
             String text = br.readLine();
             nowFreq = text.trim();
-            if(nowFreq.length()>3){
-                nowFreq = nowFreq.substring(0,nowFreq.length()-3)+"MHZ";
+            if (nowFreq.length() > 3) {
+                nowFreq = nowFreq.substring(0, nowFreq.length() - 3) + "MHZ";
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            result[0] = nowFreq;
+        }catch (FileNotFoundException e){
+            result[0] = "N/A";
         }
 
-        result[1] = nowFreq;
-
-        //获得cpu最大频率
-        String maxFreq = "N/A";
         try {
-            String[] args = { "/system/bin/cat", "/sys/devices/system/cpu/cpu"+num+"/cpufreq/cpuinfo_max_freq" };
-            cmd = new ProcessBuilder(args);
-            Process process = cmd.start();
-            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-            String line = reader.readLine();
-            if(line.length()>3){
-                maxFreq = line.substring(0,line.length()-3)+"MHZ";
+            //获得cpu最大频率
+            String maxFreq = "N/A";
+            FileReader fr2 = new FileReader("/sys/devices/system/cpu/cpu"+num+"/cpufreq/cpuinfo_max_freq");
+            BufferedReader br2 = new BufferedReader(fr2);
+            String text2 = br2.readLine();
+            maxFreq = text2.trim();
+            if(maxFreq.length()>3){
+                maxFreq = maxFreq.substring(0,maxFreq.length()-3)+"MHZ";
             }
-
-            reader.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+            result[1] = maxFreq;
+        }catch (FileNotFoundException e){
+            result[1] = "N/A";
         }
 
-        result[2] = maxFreq;
         return result;
     }
 
@@ -278,7 +223,6 @@ public class DeviceUtils {
     }
 
 
-
     //uname -a
     public static String getSysInfo(){
         StringBuilder builder = new StringBuilder();
@@ -305,12 +249,6 @@ public class DeviceUtils {
         }
 
         return ut/1000.0f;
-    }
-
-
-    //判断是否存在flashlight
-    public static boolean isHaveFlashLight(Context context){
-        return context.getPackageManager().hasSystemFeature(PackageManager.FEATURE_CAMERA_FLASH);
     }
 
 }

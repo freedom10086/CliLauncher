@@ -37,16 +37,13 @@ public class ExecCmdClient {
                     try { // 同步阻塞获取信号量
                         String res = command.exec(state);
                         handler.sendMessage(ExecResultHandler.MSG_SUCCESS,res,OutPutType.NORMAL);
-                    } catch (InterruptedException e) {
+                    }catch (Exception e) {
                         e.printStackTrace();
-                        handler.sendMessage(ExecResultHandler.MSG_FAILURE,"canceled...",OutPutType.ERROR);
-                    } catch (Exception e) {
-                        e.printStackTrace();
+                        handler.sendMessage(ExecResultHandler.MSG_FAILURE,e.getMessage(),OutPutType.ERROR);
                     }
 
                 }
             };
-
             Future f =  threadPool.submit(runnable);
             String key = Long.toHexString(System.currentTimeMillis());
             tasks.put(key,f);

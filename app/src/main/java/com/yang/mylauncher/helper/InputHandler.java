@@ -100,6 +100,8 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
             execContext.command = currentCmd;
             execContext.commandStr = commadArgs.get(0);
             execContext.args = new String[commadArgs.size()-1];
+            execContext.input = input;
+
             for(int j=1;j<commadArgs.size();j++){
                 execContext.args[j-1] = commadArgs.get(j);
             }

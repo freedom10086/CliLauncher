@@ -12,6 +12,7 @@ public class ExecContext {
         this.resolver = context.getContentResolver();
     }
 
+    public String input;
     public Context context;
     public String currentDir;
     public String[] args;
