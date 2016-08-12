@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.ContactsContract;
+import android.util.Log;
 
 import com.yang.mylauncher.data.Contact;
 
@@ -29,7 +30,7 @@ public class ContactManerger {
                 ContactsContract.CommonDataKinds.Phone.CONTENT_URI,
                 new String[]{ContactsContract.CommonDataKinds.Phone.NUMBER,
                         ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME,
-                        ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED},
+                        ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED,},
                 null, null, ContactsContract.CommonDataKinds.Phone.TIMES_CONTACTED + " DESC");
 
         while (phone != null && phone.moveToNext()) {

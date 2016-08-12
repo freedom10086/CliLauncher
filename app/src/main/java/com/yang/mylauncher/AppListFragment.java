@@ -2,26 +2,41 @@ package com.yang.mylauncher;
 
 import android.app.Fragment;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.EditText;
+import android.widget.Filter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yang.mylauncher.data.AppData;
+import com.yang.mylauncher.utils.ImeUtil;
+import com.yang.mylauncher.utils.PinyinUtil;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 
-public class AppListFragment extends Fragment {
+public class AppListFragment extends Fragment implements TextWatcher {
 
     public static final String TAG = "APPS";
     private GridView app_list;
     private List<AppData> apps;
     private MyAppListAdapter adapter;
+    private List<AppData> filterApps;
+    private EditText editText;
 
 
     @Override
@@ -30,24 +45,60 @@ public class AppListFragment extends Fragment {
         app_list = (GridView) v.findViewById(R.id.app_list);
         adapter = new MyAppListAdapter();
         apps = ((MainActivity)getActivity()).apps;
-
+        filterApps = new ArrayList<>();
+        filterApps.addAll(apps);
         app_list.setAdapter(adapter);
+        editText = (EditText) v.findViewById(R.id.ed_search);
+        editText.addTextChangedListener(this);
+
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                setSerachKey();
+            }
+        }).start();
         return v;
     }
 
 
+    private void setSerachKey(){
+        for(int i=0;i<apps.size();i++){
+            String a = apps.get(i).name.toString().toLowerCase();
+            String fullpy = PinyinUtil.getFullPy(a);
+            String firstpy = PinyinUtil.getFirstPy(a);
+            apps.get(i).searchKey +=","+firstpy+","+fullpy;
+            Log.e("serachkey",apps.get(i).searchKey);
+        }
+    }
+
+    @Override
+    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+    }
+
+    @Override
+    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+        String s = charSequence.toString().trim();
+        s = s.toLowerCase();
+        adapter.onFilter(s);
+    }
+
+    @Override
+    public void afterTextChanged(Editable editable) {
+
+    }
 
 
     private class MyAppListAdapter extends BaseAdapter{
 
         @Override
         public int getCount() {
-            return apps.size();
+            return filterApps.size();
         }
 
         @Override
         public Object getItem(int i) {
-            return apps.get(i);
+            return filterApps.get(i);
         }
 
         @Override
@@ -70,6 +121,21 @@ public class AppListFragment extends Fragment {
             return view;
         }
 
+        public void onFilter(String s){
+            filterApps.clear();
+            for (AppData app : apps) {
+                s = s.trim().toLowerCase();
+                String searchkey = app.searchKey;
+                String[] searchs = searchkey.split(",");
+                for (String ss:searchs){
+                    if(ss.contains(s)){
+                        filterApps.add(app);
+                        break;
+                    }
+                }
+            }
+            notifyDataSetChanged();
+        }
     }
 
     private class AppItemViewHolder{
@@ -84,7 +150,7 @@ public class AppListFragment extends Fragment {
         }
 
         void setData(final int pos){
-            final AppData i = apps.get(pos);
+            final AppData i = filterApps.get(pos);
             icon.setImageDrawable(i.icon);
             name.setText(i.name);
 

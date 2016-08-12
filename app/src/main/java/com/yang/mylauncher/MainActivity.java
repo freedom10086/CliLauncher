@@ -7,6 +7,7 @@ import android.app.FragmentTransaction;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -14,7 +15,9 @@ import android.widget.TextView;
 import com.yang.mylauncher.data.AppData;
 import com.yang.mylauncher.helper.LoadDbUtil;
 import com.yang.mylauncher.utils.DeviceUtils;
+import com.yang.mylauncher.utils.ImeUtil;
 import com.yang.mylauncher.utils.NetworkUtils;
+import com.yang.mylauncher.utils.PinyinUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,9 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 .commit();
 
         new UpdateDbTask().execute();
+
+        Log.e("pinyin",PinyinUtil.getFirstPy("你是谁8888ooooo你好"));
+        Log.e("pinyin",PinyinUtil.getFullPy("你是谁8888ooooo你好"));
     }
 
     @Override
@@ -73,6 +79,7 @@ public class MainActivity extends Activity implements View.OnClickListener{
                 if(f==null){
                     f  = new AppListFragment();
                 }
+                ImeUtil.hideSoftInput(this);
                 switchContent(f,AppListFragment.TAG);
         }
     }

@@ -15,6 +15,7 @@ import com.yang.mylauncher.SuggestProvider;
 import com.yang.mylauncher.data.AppData;
 import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.data.Contact;
+import com.yang.mylauncher.utils.PinyinUtil;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -125,15 +126,14 @@ public class LoadDbUtil {
             resolver.delete(SuggestProvider.URI,where,whereArgs);
 
             for(AppData app:apps){
-                String[] p  = app.pkg.split(".");
-                String searchneme = app.name.toString();
-                if(p.length>1){
-                    searchneme = searchneme+","+p[p.length-1];
-                }
+                String sn = app.name.toString().toLowerCase();
+                String firstpy = PinyinUtil.getFirstPy(sn);
+                String fullpy = PinyinUtil.getFullPy(sn);
+                sn +=","+firstpy+","+fullpy;
                 ContentValues values = new ContentValues();
                 values.put(SuggestProvider.DISPLAY_NAME,app.name.toString());
                 values.put(SuggestProvider.CMD_CLASS_NAME,"apps");
-                values.put(SuggestProvider.SEARCH_NAME,searchneme);
+                values.put(SuggestProvider.SEARCH_NAME,sn);
                 values.put(SuggestProvider.TYPE, ArgType.APP);
                 resolver.insert(SuggestProvider.URI,values);
             }

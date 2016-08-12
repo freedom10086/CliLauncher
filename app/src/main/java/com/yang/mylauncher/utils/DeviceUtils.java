@@ -102,7 +102,7 @@ public class DeviceUtils {
             for (String num : arrayOfString) {
                 Log.i(str2, num + "\t");
             }
-            initial_memory = Integer.valueOf(arrayOfString[1]) * 1024;// 获得系统总内存，单位是KB，乘以1024转换为Byte
+            initial_memory = Integer.valueOf(arrayOfString[1]);// 获得系统总内存，单位是KB
             localBufferedReader.close();
         } catch (IOException e) {
             e.printStackTrace();

@@ -55,7 +55,6 @@
         <EditText
             android:id="@+id/ed_input"
             android:gravity="bottom"
-            android:height="24dp"
             android:hint="@string/app_name"
             android:textSize="14sp"
             android:background="@null"

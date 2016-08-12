@@ -1,6 +1,7 @@
 package com.yang.mylauncher.cmd;
 
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.yang.mylauncher.data.ArgType;
 import com.yang.mylauncher.utils.DeviceUtils;
@@ -21,6 +22,7 @@ public class unknown extends base {
     @Override
     protected String execCommand() throws Exception{
         String mac =  DeviceUtils.getMacAddress(EXECCONTEXT.context);
+        Log.e("mac",mac+"===");
         Map<String,String> params = new HashMap<>();
         params.put("key",key);
         params.put("info",EXECCONTEXT.input);
@@ -47,6 +49,10 @@ public class unknown extends base {
                 }
 //
             }
+        }
+
+        if(root.has("url")){
+            finalstr.append("\nurl:").append(root.getString("url"));
         }
         return finalstr.toString();
     }
