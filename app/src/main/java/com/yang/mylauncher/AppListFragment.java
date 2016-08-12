@@ -2,6 +2,9 @@ package com.yang.mylauncher;
 
 import android.app.Fragment;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -64,7 +67,6 @@ public class AppListFragment extends Fragment implements TextWatcher,AdapterView
         return v;
     }
 
-
     private void setSerachKey(){
         for(int i=0;i<apps.size();i++){
             String a = apps.get(i).name.toString().toLowerCase();
@@ -73,6 +75,34 @@ public class AppListFragment extends Fragment implements TextWatcher,AdapterView
             apps.get(i).searchKey +=","+firstpy+","+fullpy;
             Log.e("serachkey",apps.get(i).searchKey);
         }
+    }
+
+
+    //-1 delete 0 change 1 add
+    public void onAppDataChange(int mode,String pkg){
+        switch (mode){
+            case -1:
+                for(AppData a:apps){
+                    if(a.pkg.equals(pkg)){
+                        apps.remove(a);
+                        filterApps.remove(a);
+                        break;
+                    }
+                }
+                break;
+            case 1:
+                PackageManager manager = getActivity().getPackageManager();
+                try {
+                    ApplicationInfo info =  manager.getApplicationInfo(pkg, PackageManager.GET_META_DATA);
+                    Intent intet = manager.getLaunchIntentForPackage(pkg);
+                    AppData d = new AppData(info.loadLabel(manager), pkg, intet, info.loadIcon(manager));
+                    filterApps.add(d);
+                    apps.add(d);
+                } catch (PackageManager.NameNotFoundException e) {
+                    e.printStackTrace();
+                }
+        }
+        adapter.notifyDataSetChanged();
     }
 
     @Override

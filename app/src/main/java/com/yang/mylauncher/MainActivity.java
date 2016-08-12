@@ -4,13 +4,22 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.yang.mylauncher.data.AppData;
 import com.yang.mylauncher.helper.LoadDbUtil;
@@ -28,19 +37,17 @@ public class MainActivity extends Activity implements View.OnClickListener{
     private Fragment current;
     private TextView info_text1,info_text2;
     public List<AppData> apps =new ArrayList<>();
+    private AppChangeReceiver receiver;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        setTransparentStatusBar();
         manager = getFragmentManager();
         info_text1 = (TextView) findViewById(R.id.info_1);
         info_text2 = (TextView) findViewById(R.id.info_2);
-
         findViewById(R.id.btn_show_apps).setVisibility(View.GONE);
-
         String model = DeviceUtils.getModel();
         String menufacture = DeviceUtils.getManufacturer();
         String netWork = NetworkUtils.getCurNetworkType(this);
@@ -58,8 +65,21 @@ public class MainActivity extends Activity implements View.OnClickListener{
 
         new UpdateDbTask().execute();
 
-        Log.e("pinyin",PinyinUtil.getFirstPy("你是谁8888ooooo你好"));
-        Log.e("pinyin",PinyinUtil.getFullPy("你是谁8888ooooo你好"));
+        receiver = new AppChangeReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
+        intentFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
+        intentFilter.addDataScheme("package");
+        registerReceiver(receiver,intentFilter);
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if(receiver!=null){
+            unregisterReceiver(receiver);
+        }
     }
 
     @Override
@@ -99,20 +119,6 @@ public class MainActivity extends Activity implements View.OnClickListener{
         }
     }
 
-    /**
-     * 设置透明状态栏(api >= 19方可使用)
-     * <p>android:clipToPadding="true"
-     * <p>android:fitsSystemWindows="true"
-     */
-    private   void setTransparentStatusBar() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            //透明状态栏
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
-            //透明导航栏
-            getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);
-        }
-    }
-
 
     private class UpdateDbTask extends AsyncTask<Void,Void,List<AppData>>{
 
@@ -133,6 +139,27 @@ public class MainActivity extends Activity implements View.OnClickListener{
             findViewById(R.id.btn_show_apps).setOnClickListener(MainActivity.this);
             findViewById(R.id.btn_show_apps).setVisibility(View.VISIBLE);
         }
+    }
+
+
+    public class AppChangeReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            AppListFragment f = (AppListFragment) manager.findFragmentByTag(AppListFragment.TAG);
+            String packageName = intent.getDataString().split(":")[1];
+            Log.e("name",packageName);
+            if(f!=null){
+                switch (intent.getAction()){
+                    case Intent.ACTION_PACKAGE_ADDED:
+                        f.onAppDataChange(1,packageName);
+                        break;
+                    case Intent.ACTION_PACKAGE_REMOVED:
+                        f.onAppDataChange(-1,packageName);
+                        break;
+                }
+            }
+        }
+
     }
 
 }
