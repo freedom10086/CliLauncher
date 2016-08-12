@@ -9,16 +9,16 @@ import com.yang.mylauncher.data.OutPutType;
 
 public abstract class ExecResultHandler {
 
-    protected static final int MSG_SUCCESS = 0;
-    protected static final int MSG_FAILURE = 1;
-    protected static final int MSG_START = 2;
-    protected static final int MSG_PROGRESS = 3;
+    static final int MSG_SUCCESS = 0;
+    static final int MSG_FAILURE = 1;
+    static final int MSG_START = 2;
+    private static final int MSG_PROGRESS = 3;
 
     private Handler handler;
     private Looper looper = null;
     private OutPutType type = OutPutType.NORMAL;
 
-    public ExecResultHandler(){
+    protected ExecResultHandler(){
         this.looper = (looper == null ? Looper.getMainLooper() : looper);
         handler = new MyHandler(this, this.looper);
     }

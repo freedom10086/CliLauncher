@@ -15,6 +15,10 @@
 
     <string-array name="shellcommand">
         <item>ls</item>
-        <item>netcfg|网络</item>
+        <item>rm</item>
+        <item>cd</item>
+        <item>mv</item>
+        <item>cp</item>
+        <item>netcfg,网络</item>
     </string-array>
 </resources>

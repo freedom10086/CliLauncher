@@ -8,25 +8,17 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.content.pm.ApplicationInfo;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.yang.mylauncher.data.AppData;
 import com.yang.mylauncher.helper.LoadDbUtil;
 import com.yang.mylauncher.utils.DeviceUtils;
 import com.yang.mylauncher.utils.ImeUtil;
 import com.yang.mylauncher.utils.NetworkUtils;
-import com.yang.mylauncher.utils.PinyinUtil;
 
 import java.util.ArrayList;
 import java.util.List;

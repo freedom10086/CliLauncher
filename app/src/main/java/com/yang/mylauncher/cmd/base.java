@@ -9,7 +9,6 @@ public abstract class base {
     public final String exec(ExecContext execContext) throws Exception{
         this.EXECCONTEXT = execContext;
         int arglen = (execContext.args==null)?0:execContext.args.length;
-
         if(arglen>getArgsNum()[1]){
             return "Args number error !!! \ncommandStr \""+execContext.commandStr +"\" max need "+getArgsNum()[1]+" args!!!";
         }else if(arglen<getArgsNum()[0]){

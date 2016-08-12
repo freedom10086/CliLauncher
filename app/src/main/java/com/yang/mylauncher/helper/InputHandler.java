@@ -136,7 +136,6 @@ public class InputHandler implements TextWatcher,EditText.OnEditorActionListener
                 }
                 editText.setSelection(editText.length());
             }
-            Log.e("click",((int)view.getTag())+" click");
         }
 
     }

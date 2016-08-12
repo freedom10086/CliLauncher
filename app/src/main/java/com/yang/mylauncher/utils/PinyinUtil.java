@@ -1,7 +1,5 @@
 package com.yang.mylauncher.utils;
 
-import java.util.Set;
-
 public class PinyinUtil {
 
     private static int[] pyvalue = new int[] { -20319, -20317, -20304, -20295,

@@ -2,43 +2,33 @@ package com.yang.mylauncher;
 
 import android.app.Fragment;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.EditText;
-import android.widget.Filter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.yang.mylauncher.data.AppData;
 import com.yang.mylauncher.utils.AppUtils;
-import com.yang.mylauncher.utils.ImeUtil;
 import com.yang.mylauncher.utils.PinyinUtil;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 
 public class AppListFragment extends Fragment implements TextWatcher,AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     public static final String TAG = "APPS";
-    private GridView app_list;
     private List<AppData> apps;
     private MyAppListAdapter adapter;
     private List<AppData> filterApps;
@@ -48,7 +38,7 @@ public class AppListFragment extends Fragment implements TextWatcher,AdapterView
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_app_list, container, false);
-        app_list = (GridView) v.findViewById(R.id.app_list);
+        GridView app_list = (GridView) v.findViewById(R.id.app_list);
         adapter = new MyAppListAdapter();
         apps = ((MainActivity)getActivity()).apps;
         filterApps = new ArrayList<>();

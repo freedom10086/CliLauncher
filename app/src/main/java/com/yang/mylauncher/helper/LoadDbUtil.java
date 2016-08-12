@@ -78,7 +78,25 @@ public class LoadDbUtil {
             values.put(SuggestProvider.TYPE, ArgType.COMMAND);
             resolver.insert(SuggestProvider.URI,values);
         }
+
+        String[] shells = context.getResources().getStringArray(R.array.shellcommand);
+        for (String s : shells) {
+            String name = null;
+            if (s.contains(",")) {
+                name = s.split(",")[0];
+            } else {
+                name  = s;
+            }
+            ContentValues values = new ContentValues();
+            values.put(SuggestProvider.DISPLAY_NAME, name);
+            values.put(SuggestProvider.CMD_CLASS_NAME,"shell");
+            values.put(SuggestProvider.SEARCH_NAME, s);
+            values.put(SuggestProvider.TYPE, ArgType.COMMAND);
+            resolver.insert(SuggestProvider.URI,values);
+        }
     }
+
+
 
     private static void uodatePeoples(ContentResolver resolver, Context context){
         Map<String,Contact> peoples =  ContactManerger.getContacts(context);

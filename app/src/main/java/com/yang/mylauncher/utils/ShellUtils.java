@@ -33,7 +33,13 @@ public class ShellUtils {
         if (status == 0) {
             return buffer.toString();
         } else {
-            return "exec "+command+" faild !!";
+            buffer.delete(0,buffer.length());
+            input =  p.getErrorStream();
+            in = new BufferedReader(new InputStreamReader(input));
+            while ((line= in.readLine()) != null){
+                buffer.append(line).append("\n");
+            }
+            return buffer.toString();
         }
     }
 

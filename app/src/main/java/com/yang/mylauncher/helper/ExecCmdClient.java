@@ -26,10 +26,9 @@ public class ExecCmdClient {
         final base command = state.command;
         if(command==null){
             handler.sendMessage(ExecResultHandler.MSG_FAILURE,"error", OutPutType.ERROR);
-            return "error";
+            return "error, cmd cn not be empty !!";
         }
         handler.sendMessage(ExecResultHandler.MSG_START,"Start",OutPutType.INFO);
-
         if(command.isAsync()){
             Runnable runnable = new Runnable() {
                 @Override
