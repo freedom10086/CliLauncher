@@ -7,13 +7,6 @@
     <color name="colorWarning">#ffff7336</color>
     <color name="colorError">#ffff3333</color>
 
-    <color name="colorSuggestBg">#ff00897B</color>
-    <color name="colorSuggestBgC">#ff76FF03</color>
-    <color name="colorSuggestBgM">#ffEEFF41</color>
-    <color name="colorSuggestBgP">#ff64FFDA</color>
-    <color name="colorSuggestBgF">#ff03A9F4</color>
-    <color name="coloeSuggestBgS">@android:color/holo_orange_light</color>
-
     <color name="colorHint">#ff888888</color>
     <color name="colorScrollBar">#1fffffff</color>
 </resources>

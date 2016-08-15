@@ -62,7 +62,7 @@ public class SuggestProvider extends ContentProvider {
     @Override
     public Uri insert(Uri uri, ContentValues values) {
         sqlDB = dbHelper.getWritableDatabase();
-        long rowId =  sqlDB.insert(TABLE_NAME,"0",values);
+        long rowId =sqlDB.insert(TABLE_NAME,"0",values);
         Log.e("DATABASE", "插入"+rowId);
         return null;
     }

@@ -1,4 +1,4 @@
-package com.yang.mylauncher.view;
+package com.yang.mylauncher;
 
 
 import android.content.Context;
@@ -11,7 +11,6 @@ import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.widget.TextView;
 
-import com.yang.mylauncher.R;
 import com.yang.mylauncher.data.OutPutType;
 
 public class ConsoletextView extends TextView{

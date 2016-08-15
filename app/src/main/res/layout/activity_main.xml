@@ -33,6 +33,7 @@
             android:layout_height="wrap_content"
             android:layout_toStartOf="@+id/btn_show_apps" />
         <Button
+            android:visibility="gone"
             android:id="@+id/btn_show_apps"
             android:layout_width="40dp"
             android:layout_height="32dp"
@@ -43,6 +44,17 @@
     <FrameLayout
         android:id="@+id/main_frame"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent">
+
+        <include
+            android:id="@+id/content_main"
+            layout="@layout/content_main"/>
+
+        <include
+            android:visibility="gone"
+            android:id="@+id/content_app_list"
+            layout="@layout/content_app_list"/>
+
+    </FrameLayout>
 
 </LinearLayout>
