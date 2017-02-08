@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.yang.mylauncher">
+    package="me.yluo.clilauncher">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
@@ -36,7 +36,7 @@
 
         <provider
             android:name=".SuggestProvider"
-            android:authorities="com.yang.mylauncher.SuggestProvider"
+            android:authorities="me.yluo.clilauncher.SuggestProvider"
             android:enabled="true"
             android:exported="true"/>
     </application>

@@ -8,6 +8,7 @@
         <item>memory,内存,ram</item>
         <item>people,联系人</item>
         <item>rom,硬盘</item>
+        <item>speedtest,硬盘测速</item>
         <item>weather,天气</item>
         <item>wifi,网络,无线网</item>
         <item>volume,音量</item>
