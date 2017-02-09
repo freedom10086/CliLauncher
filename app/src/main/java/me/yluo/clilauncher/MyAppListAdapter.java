@@ -2,6 +2,9 @@ package me.yluo.clilauncher;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.Matrix;
+import android.graphics.drawable.BitmapDrawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
@@ -19,7 +22,7 @@ import me.yluo.clilauncher.data.AppData;
 import me.yluo.clilauncher.utils.AppUtils;
 
 
-class MyAppListAdapter extends BaseAdapter implements TextWatcher{
+class MyAppListAdapter extends BaseAdapter implements TextWatcher {
 
     private List<AppData> filterApps;
     private List<AppData> apps;
@@ -62,7 +65,7 @@ class MyAppListAdapter extends BaseAdapter implements TextWatcher{
         final AppItemViewHolder holder;
         if (view == null || view.getTag() == null) {
             view = LayoutInflater.from(context).inflate(R.layout.app_list_item, null);
-            holder = new AppItemViewHolder(view);
+            holder = new AppItemViewHolder(view, i);
             view.setTag(holder);
         } else {
             holder = (AppItemViewHolder) view.getTag();
@@ -106,21 +109,16 @@ class MyAppListAdapter extends BaseAdapter implements TextWatcher{
     }
 
 
-    private class AppItemViewHolder{
+    private class AppItemViewHolder {
 
         ImageView icon;
         TextView name;
         View main_item;
-        AppItemViewHolder(View itemView) {
+
+        AppItemViewHolder(View itemView, final int pos) {
             icon = (ImageView) itemView.findViewById(R.id.icon);
             name = (TextView) itemView.findViewById(R.id.name);
             main_item = itemView.findViewById(R.id.main_item);
-        }
-
-        void setData(final int pos){
-            final AppData i = filterApps.get(pos);
-            icon.setImageDrawable(i.icon);
-            name.setText(i.name);
 
             main_item.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -133,11 +131,31 @@ class MyAppListAdapter extends BaseAdapter implements TextWatcher{
             main_item.setOnLongClickListener(new View.OnLongClickListener() {
                 @Override
                 public boolean onLongClick(View view) {
-                    AppUtils.uninstall(context,filterApps.get(pos).pkg);
+                    AppUtils.uninstall(context, filterApps.get(pos).pkg);
                     return false;
                 }
             });
+        }
 
+        void setData(final int pos) {
+            final AppData i = filterApps.get(pos);
+            name.setText(i.name);
+
+            if (i.icon.getBounds().bottom > 120) {
+                if (i.icon instanceof BitmapDrawable) {
+                    //压缩
+                    BitmapDrawable bd = (BitmapDrawable) i.icon;
+                    float scale = 120 / bd.getBitmap().getWidth();
+                    Matrix matrix = new Matrix();
+                    matrix.postScale(scale, scale);
+                    Bitmap bmp = Bitmap.createBitmap(bd.getBitmap(), 0, 0, 120, 120, matrix, true);
+                    icon.setImageBitmap(bmp);
+                    i.icon = new BitmapDrawable(context.getResources(), bmp);
+                    return;
+                }
+            }
+
+            icon.setImageDrawable(i.icon);
         }
     }
 }
